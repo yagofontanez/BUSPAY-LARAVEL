@@ -28,4 +28,16 @@ class User extends Authenticatable
     {
         return $this->US_SENHA;
     }
+
+    public function passagensCompradas()
+    {
+        return $this->hasMany(Passagem::class);
+    }
+
+    public function passagensCriadas()
+    {
+        return $this->hasMany(Passagem::class);
+    }
+
+
 }

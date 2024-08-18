@@ -19,9 +19,15 @@ class AuthController extends Controller
 
         if (Auth::attempt(['US_EMAIL' => $credentials['US_EMAIL'], 'password' => $credentials['US_SENHA']])) {
             $request->session()->regenerate();
-            return redirect()->intended('/')->with('success', 'Login realizado com sucesso!');
+            return redirect()->intended('/home')->with('success', 'Login realizado com sucesso!');
         }
 
         return back()->with('error', 'Falha ao autenticar usuário');
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/login');
     }
 }
