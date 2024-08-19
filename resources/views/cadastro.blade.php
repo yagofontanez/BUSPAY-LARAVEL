@@ -171,7 +171,7 @@
             </a>
         </div>
         <h1>Cadastro</h1>
-        <form action="{{ route('cadastro') }}" method="POST">
+        <form action="{{ route('cadastro-post') }}" method="POST">
             @csrf
             <div id="div-label" class="tipo-comprador">
                 <label id="tipocomp" for="US_TIPOCOMPRADOR">

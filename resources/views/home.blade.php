@@ -259,7 +259,8 @@
         }
 
         .separator-div,
-        .container-datas {
+        .container-datas,
+        form {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -305,7 +306,8 @@
             gap: 1rem;
         }
 
-        .linha-dados button {
+        .linha-dados button,
+        .container-datas button {
             display: flex;
             align-items: center;
             padding: 10px;
@@ -318,6 +320,57 @@
 
         .linha-dados button:hover {
             background-color: #112233;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            font-family: "Poppins", sans-serif;
+            color: #fff;
+        }
+
+        .pagination a {
+            padding: 10px 15px;
+            margin: 0 5px;
+            background-color: #2C3E50;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .pagination a:hover {
+            background-color: #1bd1b5;
+        }
+
+        .pagination .disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            padding: 10px 15px;
+            margin: 0 5px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .pagination .current {
+            background-color: #1bd1b5;
+            padding: 10px 15px;
+            margin: 0 5px;
+            color: #fff;
+            border-radius: 5px;
+            cursor: default;
+        }
+
+        .modal-filtro {
+            display: none;
+            position: fixed;
+            inset: 0;
+            width: 20rem;
+            height: 20rem;
+            background-color: red;
         }
     </style>
 
@@ -362,7 +415,7 @@
                 empresas para escolher. Compare preços, selecione seu assento preferido e compre sua passagem com
                 segurança e rapidez, tudo em um só lugar.
             </p>
-            <a href="">
+            <a href="#passagens-lista">
                 <button class="btn-comprar">Compre sua Passagem</button>
             </a>
         </div>
@@ -377,12 +430,12 @@
         </div>
     </div>
 
-    <div class="segunda-dobra">
+    <div class="segunda-dobra" id="passagens-lista">
         <div class="filtros-passagens">
             <div class="separator-div">
                 <p>BUSCAR PASSAGEM</p>
                 <input type="text" name="" placeholder="Digite a Cidade" id="">
-                <button title="filter" class="filter">
+                <button title="filter" class="filter" onclick="handleOpenModalFiltros()">
                     <svg viewBox="0 0 512 512" height="1em">
                         <path
                             d="M0 416c0 17.7 14.3 32 32 32l54.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 448c17.7 0 32-14.3 32-32s-14.3-32-32-32l-246.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 384c-17.7 0-32 14.3-32 32zm128 0a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM320 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm32-80c-32.8 0-61 19.7-73.3 48L32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l246.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48l54.7 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-54.7 0c-12.3-28.3-40.5-48-73.3-48zM192 128a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm73.3-64C253 35.7 224.8 16 192 16s-61 19.7-73.3 48L32 64C14.3 64 0 78.3 0 96s14.3 32 32 32l86.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 128c17.7 0 32-14.3 32-32s-14.3-32-32-32L265.3 64z">
@@ -390,20 +443,50 @@
                     </svg>
                 </button>
             </div>
-            <div class="container-datas">
-                <p>DE: </p>
-                <input type="date" name="" id="">
-                <p>A: </p>
-                <input type="date" name="" id="">
-            </div>
+            <form action="{{ route('passagens.index') }}" method="GET">
+                <div class="container-datas">
+                    <p>DE: </p>
+                    <input type="date" name="date_from" id="date_from">
+                    <p>A: </p>
+                    <input type="date" name="date_to" id="date_to">
+                    <button type="submit">
+                        <svg height="20px" width="20px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve">
+                            <style type="text/css">
+                                .st0 {
+                                    fill: #fff;
+                                }
+                            </style>
+                            <g>
+                                <path class="st0" d="M172.625,102.4c-42.674,0-77.392,34.739-77.392,77.438c0,5.932,4.806,10.74,10.733,10.74
+		c5.928,0,10.733-4.808,10.733-10.74c0-30.856,25.088-55.959,55.926-55.959c5.928,0,10.733-4.808,10.733-10.74
+		C183.358,107.208,178.553,102.4,172.625,102.4z" />
+                                <path class="st0"
+                                    d="M361.657,301.511c19.402-30.436,30.645-66.546,30.645-105.244C392.302,88.036,304.318,0,196.151,0
+		c-38.676,0-74.765,11.25-105.182,30.663C66.734,46.123,46.11,66.759,30.659,91.008C11.257,121.444,0,157.568,0,196.267
+		c0,108.217,87.998,196.266,196.151,196.266c38.676,0,74.779-11.264,105.197-30.677C325.582,346.396,346.206,325.76,361.657,301.511
+		z M259.758,320.242c-19.075,9.842-40.708,15.403-63.607,15.403c-76.797,0-139.296-62.535-139.296-139.378
+		c0-22.912,5.558-44.558,15.394-63.644c13.318-25.856,34.483-47.019,60.323-60.331c19.075-9.842,40.694-15.403,63.578-15.403
+		c76.812,0,139.296,62.521,139.296,139.378c0,22.898-5.558,44.53-15.394,63.616C306.749,285.739,285.598,306.916,259.758,320.242z" />
+                                <path class="st0"
+                                    d="M499.516,439.154L386.275,326.13c-16.119,23.552-36.771,44.202-60.309,60.345l113.241,113.024
+		c8.329,8.334,19.246,12.501,30.148,12.501c10.916,0,21.833-4.167,30.162-12.501C516.161,482.83,516.161,455.822,499.516,439.154z" />
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+
         </div>
         <div class="dados-passagens">
             @foreach($passagens as $passagem)
                 <div class="linha-dados">
                     <p>{{ $passagem->PAS_CIDADEIDA }}/{{ $passagem->PAS_ESTADOIDA }} -
-                        {{ $passagem->PAS_CIDADEVOLTA }}/{{ $passagem->PAS_ESTADOVOLTA }}</p>
+                        {{ $passagem->PAS_CIDADEVOLTA }}/{{ $passagem->PAS_ESTADOVOLTA }}
+                    </p>
                     <p>R${{ number_format($passagem->PAS_PRECO, 2, ',', '.') }}</p>
-                    <p>{{ \Carbon\Carbon::parse($passagem->PAS_HORASIDA)->setTimezone('America/Sao_Paulo')->format('H:i') }}</p>
+                    <p>{{ \Carbon\Carbon::parse($passagem->PAS_HORASIDA)->setTimezone('America/Sao_Paulo')->format('H:i') }}
+                    </p>
                     <button>
                         <svg fill="#fff" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -420,6 +503,37 @@
                 </div>
             @endforeach
         </div>
+
+        <div class="pagination">
+            @php
+                $totalPages = ceil($total / $perPage);
+            @endphp
+
+            @if($currentPage > 1)
+                <a href="{{ url()->current() }}?page={{ $currentPage - 1 }}" class="pagination-prev"> < </a>
+            @else
+                <span class="pagination-prev disabled"> < </span>
+            @endif
+
+            @for($i = 1; $i <= $totalPages; $i++)
+                @if($i == $currentPage)
+                    <span class="pagination-page current">{{ $i }}</span>
+                @else
+                    <a href="{{ url()->current() }}?page={{ $i }}" class="pagination-page">{{ $i }}</a>
+                @endif
+            @endfor
+
+            @if($currentPage < $totalPages)
+                <a href="{{ url()->current() }}?page={{ $currentPage + 1 }}" class="pagination-next"> > </a>
+            @else
+                <span class="pagination-next disabled"> > </span>
+            @endif
+        </div>
+
+    </div>
+
+    <div class="modal-filtro">
+        <p>OIIIIIIIIII</p>
     </div>
 
 </body>
@@ -427,6 +541,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+<script>
+    function handleOpenModalFiltros() {
+        const modalFiltros = document.querySelector('.modal-filtro');
+
+        modalFiltros.style.display = 'block';
+    }
+</script>
 
 
 <script>

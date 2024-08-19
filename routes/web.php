@@ -23,7 +23,7 @@ Route::get('/login-adm', function () {
 
 
 Route::get('/cadastro', [RegisterController::class, 'showRegistrationForm'])->name('cadastro');
-Route::post('/cadastro', [RegisterController::class, 'cadastro'])->name('cadastro');
+Route::post('/cadastro-post', [RegisterController::class, 'cadastro'])->name('cadastro-post');
 
 Route::post('/login-usuario', [AuthController::class, 'loginUsuario'])->name('login-usuario');
 
@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('passagens', PassagemController::class);
 
+    Route::get('/passagens', [PassagemController::class, 'index'])->name('passagens.index');
     Route::post('passagens/comprar', [PassagemController::class, 'comprar'])->name('passagens.comprar');
     Route::post('passagens/adicionar', [PassagemController::class, 'adicionar'])->name('passagens.adicionar');
 });

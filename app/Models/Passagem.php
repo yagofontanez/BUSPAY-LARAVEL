@@ -20,5 +20,7 @@ class Passagem extends Model
         'PAS_HORASVOLTA',
         'PAS_PRECO',
         'PAS_EMPRESA',
+        'PAS_DIAIDA',
+        'PAS_DIAVOLTA'
     ];
 }

@@ -42,7 +42,7 @@ class RegisterController extends Controller
             'US_NOME' => $data['US_NOME'],
             'US_EMAIL' => $data['US_EMAIL'],
             'US_SENHA' => Hash::make($data['US_SENHA']),
-            'US_TIPOCOMPRADOR' => TipoComprador::from($data['US_TIPOCOMPRADOR'])->value, // Manipule o enum aqui
+            'US_TIPOCOMPRADOR' => TipoComprador::from($data['US_TIPOCOMPRADOR'])->value,
             'US_DOCUMENTO' => $data['US_DOCUMENTO'],
         ]);
     }
