@@ -70,6 +70,15 @@
             color: #2C3E50;
         }
 
+        .ul-list li {
+            transition: all 0.1s cubic-bezier(0.075, 0.82, 0.165, 1);
+        }
+
+        .ul-list li:hover {
+            border-bottom: 3px solid #1bd1b5;
+            color: #1bd1b5;
+        }
+
         .profile-session {
             display: flex;
             align-items: center;
@@ -298,7 +307,7 @@
 
         .linha-dados {
             display: grid;
-            grid-template-columns: 14fr 8fr 9fr 1fr 1fr;
+            grid-template-columns: 17fr 8fr 9fr 1fr 1fr;
             align-items: center;
             padding: 10px;
             margin: 10px 0;
@@ -366,11 +375,78 @@
 
         .modal-filtro {
             display: none;
+            align-items: center;
+            flex-direction: column;
+            justify-content: space-between;
             position: fixed;
-            inset: 0;
-            width: 20rem;
-            height: 20rem;
-            background-color: red;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30rem;
+            height: 30rem;
+            background-color: #fff;
+            z-index: 11;
+            border-radius: 15px;
+            border: 3px solid #2C3E50;
+            padding: 20px;
+        }
+
+        .modal-filtro h3 {
+            color: #2C3E50;
+            font-size: 26px;
+        }
+
+        .span span {
+            opacity: 0;
+            user-select: none;
+        }
+
+        .inputs-filter {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .label-filter {
+            display: flex;
+            flex-direction: column;
+            width: 25rem;
+            color: #2C3E50;
+        }
+
+        .label-filter input {
+            height: 40px;
+            padding: 10px;
+            outline: none;
+            border: 1px solid #2C3E50;
+            border-radius: 10px;
+        }
+
+        .btn-filter {
+            background: #2C3E50;
+            color: #fff;
+            outline: none;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 10px;
+            width: 150px;
+            height: 45px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-filter:hover {
+            background: #112233;
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            height: 100vh;
+            width: 100vw;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 10;
         }
     </style>
 
@@ -379,25 +455,31 @@
 <body>
     <div id="particles-js"></div>
 
+    <div id="overlay"></div>
+
 
     <header>
         <nav>
             <img src="{{ asset('assets/logo_buspay.jpg') }}" width="70px">
             <ul class="ul-list">
-                <li><a href="">Comprar</a></li>
+                <li>
+                    <a href="#passagens-lista">Comprar</a>
+                </li>
                 <li><a href="">Vender</a></li>
                 <li><a href="">Buscar Passagens</a></li>
             </ul>
             <div class="profile-session">
                 <a href="">
-                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z"
                             stroke="#2C3E50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </a>
                 <a href="">
-                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M15 16.5V19C15 20.1046 14.1046 21 13 21H6C4.89543 21 4 20.1046 4 19V5C4 3.89543 4.89543 3 6 3H13C14.1046 3 15 3.89543 15 5V8.0625M11 12H21M21 12L18.5 9.5M21 12L18.5 14.5"
                             stroke="#A51111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -450,8 +532,9 @@
                     <p>A: </p>
                     <input type="date" name="date_to" id="date_to">
                     <button type="submit">
-                        <svg height="20px" width="20px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg"
-                            xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve">
+                        <svg height="20px" width="20px" version="1.1" id="_x32_"
+                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                            viewBox="0 0 512 512" xml:space="preserve">
                             <style type="text/css">
                                 .st0 {
                                     fill: #fff;
@@ -459,18 +542,18 @@
                             </style>
                             <g>
                                 <path class="st0" d="M172.625,102.4c-42.674,0-77.392,34.739-77.392,77.438c0,5.932,4.806,10.74,10.733,10.74
-		c5.928,0,10.733-4.808,10.733-10.74c0-30.856,25.088-55.959,55.926-55.959c5.928,0,10.733-4.808,10.733-10.74
-		C183.358,107.208,178.553,102.4,172.625,102.4z" />
+  c5.928,0,10.733-4.808,10.733-10.74c0-30.856,25.088-55.959,55.926-55.959c5.928,0,10.733-4.808,10.733-10.74
+  C183.358,107.208,178.553,102.4,172.625,102.4z" />
                                 <path class="st0"
                                     d="M361.657,301.511c19.402-30.436,30.645-66.546,30.645-105.244C392.302,88.036,304.318,0,196.151,0
-		c-38.676,0-74.765,11.25-105.182,30.663C66.734,46.123,46.11,66.759,30.659,91.008C11.257,121.444,0,157.568,0,196.267
-		c0,108.217,87.998,196.266,196.151,196.266c38.676,0,74.779-11.264,105.197-30.677C325.582,346.396,346.206,325.76,361.657,301.511
-		z M259.758,320.242c-19.075,9.842-40.708,15.403-63.607,15.403c-76.797,0-139.296-62.535-139.296-139.378
-		c0-22.912,5.558-44.558,15.394-63.644c13.318-25.856,34.483-47.019,60.323-60.331c19.075-9.842,40.694-15.403,63.578-15.403
-		c76.812,0,139.296,62.521,139.296,139.378c0,22.898-5.558,44.53-15.394,63.616C306.749,285.739,285.598,306.916,259.758,320.242z" />
+  c-38.676,0-74.765,11.25-105.182,30.663C66.734,46.123,46.11,66.759,30.659,91.008C11.257,121.444,0,157.568,0,196.267
+  c0,108.217,87.998,196.266,196.151,196.266c38.676,0,74.779-11.264,105.197-30.677C325.582,346.396,346.206,325.76,361.657,301.511
+  z M259.758,320.242c-19.075,9.842-40.708,15.403-63.607,15.403c-76.797,0-139.296-62.535-139.296-139.378
+  c0-22.912,5.558-44.558,15.394-63.644c13.318-25.856,34.483-47.019,60.323-60.331c19.075-9.842,40.694-15.403,63.578-15.403
+  c76.812,0,139.296,62.521,139.296,139.378c0,22.898-5.558,44.53-15.394,63.616C306.749,285.739,285.598,306.916,259.758,320.242z" />
                                 <path class="st0"
                                     d="M499.516,439.154L386.275,326.13c-16.119,23.552-36.771,44.202-60.309,60.345l113.241,113.024
-		c8.329,8.334,19.246,12.501,30.148,12.501c10.916,0,21.833-4.167,30.162-12.501C516.161,482.83,516.161,455.822,499.516,439.154z" />
+  c8.329,8.334,19.246,12.501,30.148,12.501c10.916,0,21.833-4.167,30.162-12.501C516.161,482.83,516.161,455.822,499.516,439.154z" />
                             </g>
                         </svg>
                     </button>
@@ -479,7 +562,7 @@
 
         </div>
         <div class="dados-passagens">
-            @foreach($passagens as $passagem)
+            @foreach ($passagens as $passagem)
                 <div class="linha-dados">
                     <p>{{ $passagem->PAS_CIDADEIDA }}/{{ $passagem->PAS_ESTADOIDA }} -
                         {{ $passagem->PAS_CIDADEVOLTA }}/{{ $passagem->PAS_ESTADOVOLTA }}
@@ -488,13 +571,15 @@
                     <p>{{ \Carbon\Carbon::parse($passagem->PAS_HORASIDA)->setTimezone('America/Sao_Paulo')->format('H:i') }}
                     </p>
                     <button>
-                        <svg fill="#fff" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg fill="#fff" width="20px" height="20px" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M20.808,11.079C19.829,16.132,12,20.5,12,20.5s-7.829-4.368-8.808-9.421C2.227,6.1,5.066,3.5,8,3.5a4.444,4.444,0,0,1,4,2,4.444,4.444,0,0,1,4-2C18.934,3.5,21.773,6.1,20.808,11.079Z" />
                         </svg>
                     </button>
                     <button>
-                        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M21 5L19 12H7.37671M20 16H8L6 3H3M16 5.5H13.5M13.5 5.5H11M13.5 5.5V8M13.5 5.5V3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z"
                                 stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -509,21 +594,24 @@
                 $totalPages = ceil($total / $perPage);
             @endphp
 
-            @if($currentPage > 1)
-                <a href="{{ url()->current() }}?page={{ $currentPage - 1 }}" class="pagination-prev"> < </a>
-            @else
-                <span class="pagination-prev disabled"> < </span>
+            @if ($currentPage > 1)
+                <a href="{{ url()->current() }}?page={{ $currentPage - 1 }}" class="pagination-prev">
+                    < </a>
+                    @else
+                        <span class="pagination-prev disabled">
+                            < </span>
             @endif
 
-            @for($i = 1; $i <= $totalPages; $i++)
-                @if($i == $currentPage)
+            @for ($i = 1; $i <= $totalPages; $i++)
+                @if ($i == $currentPage)
                     <span class="pagination-page current">{{ $i }}</span>
                 @else
-                    <a href="{{ url()->current() }}?page={{ $i }}" class="pagination-page">{{ $i }}</a>
+                    <a href="{{ url()->current() }}?page={{ $i }}"
+                        class="pagination-page">{{ $i }}</a>
                 @endif
             @endfor
 
-            @if($currentPage < $totalPages)
+            @if ($currentPage < $totalPages)
                 <a href="{{ url()->current() }}?page={{ $currentPage + 1 }}" class="pagination-next"> > </a>
             @else
                 <span class="pagination-next disabled"> > </span>
@@ -533,7 +621,25 @@
     </div>
 
     <div class="modal-filtro">
-        <p>OIIIIIIIIII</p>
+        <h3>FILTROS PERSONALIZADOS</h3>
+        <div class="inputs-filter">
+            <label class="label-filter" for="busca-cidade-ida">
+                Busca por Cidade Ida
+                <input type="text" name="busca-cidade-ida" id="busca-cidade-ida" placeholder="Digite a Cidade de Ida">
+            </label>
+            <label class="label-filter" for="busca-cidade-volta">
+                Busca por Cidade Volta
+                <input type="text" name="busca-cidade-volta" id="busca-cidade-volta" placeholder="Digite a Cidade de Volta">
+            </label>
+            <label class="label-filter" for="busca-empresa">
+                Busca por Empresa
+                <input type="text" name="busca-empresa" id="busca-empresa" placeholder="Digite a Empresa">
+            </label>
+            <button class="btn-filter">Filtrar</button>
+        </div>
+        <div class="span">
+            <span>.</span>
+        </div>
     </div>
 
 </body>
@@ -545,14 +651,29 @@
 <script>
     function handleOpenModalFiltros() {
         const modalFiltros = document.querySelector('.modal-filtro');
+        const overlayBackground = document.getElementById('overlay');
 
-        modalFiltros.style.display = 'block';
+        modalFiltros.style.display = 'flex';
+        overlayBackground.style.display = 'block';
+
+        function closeModal() {
+            modalFiltros.style.display = 'none';
+            overlayBackground.style.display = 'none';
+        }
+
+        overlayBackground.addEventListener('click', closeModal);
+
+        document.querySelector('.filter').addEventListener('click', function(e) {
+            e.stopPropagation();
+            modalFiltros.style.display = 'flex';
+            overlayBackground.style.display = 'block';
+        });
     }
 </script>
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const particlesJs = document.getElementById('particles-js');
         particlesJs.style.height = document.body.scrollHeight + 'px';
     });
@@ -655,7 +776,6 @@
         },
         "retina_detect": true
     });
-
 </script>
 
 <script>
@@ -667,11 +787,11 @@
         "extendedTimeOut": "1000",
     };
 
-    @if(Session::has('success'))
+    @if (Session::has('success'))
         toastr.success('{{ Session::get('success') }}');
     @endif
 
-    @if(Session::has('error'))
+    @if (Session::has('error'))
         toastr.error('{{ Session::get('error') }}');
     @endif
 </script>
