@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  app:
+    image: php:8.2-fpm
+    container_name: laravel_app
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - ./vendor:/var/www/vendor
+      - ./node_modules:/var/www/node_modules
+    networks:
+      - laravel_network
+
+  web:
+    image: nginx:alpine
+    container_name: laravel_web
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+    networks:
+      - laravel_network
+    depends_on:
+      - app
+
+  postgres:
+    image: postgres:15
+    container_name: laravel_postgres
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT}:5432"
+    networks:
+      - laravel_network
+
+  artisan:
+    image: php:8.2-fpm
+    container_name: laravel_artisan
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    networks:
+      - laravel_network
+    depends_on:
+      - postgres
+    entrypoint: ["php", "/var/www/artisan"]
+
+networks:
+  laravel_network:
+    driver: bridge
+
+volumes:
+  pgdata:
+    driver: local

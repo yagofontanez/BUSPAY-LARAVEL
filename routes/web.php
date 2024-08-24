@@ -36,9 +36,14 @@ Route::post('/login-administrador', [AuthAdminController::class, 'loginAdmin'])-
 
 
 Route::middleware('auth')->group(function () {
+    Route::patch('/passagens/salvar', [PassagemController::class, 'salvarPassagem'])->name('passagens.salvar');
     Route::get('/home', [PassagemController::class, 'index'])->name('home');
 
     Route::resource('passagens', PassagemController::class);
+
+    Route::get('/venderpassagem', function() {
+        return view('vender-passagem');
+    })->name('vender-passagem');
 
     Route::get('/passagens', [PassagemController::class, 'index'])->name('passagens.index');
     Route::post('passagens/comprar', [PassagemController::class, 'comprar'])->name('passagens.comprar');

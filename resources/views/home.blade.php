@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Laravel</title>
+    <title>Buspay | Home</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -18,9 +18,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
     <!-- Styles -->
     <style>
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -465,7 +471,7 @@
                 <li>
                     <a href="#passagens-lista">Comprar</a>
                 </li>
-                <li><a href="">Vender</a></li>
+                <li><a href="{{ route('vender-passagem') }}">Vender</a></li>
                 <li><a href="">Buscar Passagens</a></li>
             </ul>
             <div class="profile-session">
@@ -570,7 +576,7 @@
                     <p>R${{ number_format($passagem->PAS_PRECO, 2, ',', '.') }}</p>
                     <p>{{ \Carbon\Carbon::parse($passagem->PAS_HORASIDA)->setTimezone('America/Sao_Paulo')->format('H:i') }}
                     </p>
-                    <button>
+                    <button class="salvar-passagem" data-id="{{ $passagem->id }}">
                         <svg fill="#fff" width="20px" height="20px" viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -625,11 +631,13 @@
         <div class="inputs-filter">
             <label class="label-filter" for="busca-cidade-ida">
                 Busca por Cidade Ida
-                <input type="text" name="busca-cidade-ida" id="busca-cidade-ida" placeholder="Digite a Cidade de Ida">
+                <input type="text" name="busca-cidade-ida" id="busca-cidade-ida"
+                    placeholder="Digite a Cidade de Ida">
             </label>
             <label class="label-filter" for="busca-cidade-volta">
                 Busca por Cidade Volta
-                <input type="text" name="busca-cidade-volta" id="busca-cidade-volta" placeholder="Digite a Cidade de Volta">
+                <input type="text" name="busca-cidade-volta" id="busca-cidade-volta"
+                    placeholder="Digite a Cidade de Volta">
             </label>
             <label class="label-filter" for="busca-empresa">
                 Busca por Empresa
@@ -647,6 +655,50 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+
+<script>
+    const btnSalvar = document.querySelectorAll('.salvar-passagem');
+
+    btnSalvar.forEach((button) => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const passagemId = this.getAttribute('data-id');
+
+            fetch('{{ route('passagens.salvar') }}', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        id: passagemId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    Toastify({
+                        text: "Passagem salvada com sucesso!",
+                        className: "info",
+                        style: {
+                            background: "#96c93d",
+                        }
+                    }).showToast();
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    Toastify({
+                        text: "Falha ao salvar passagem.",
+                        className: "info",
+                        style: {
+                            background: rgba(255, 0, 0, 0.5),
+                        }
+                    }).showToast();
+                });
+        });
+    });
+</script>
 
 <script>
     function handleOpenModalFiltros() {

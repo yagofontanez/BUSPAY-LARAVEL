@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Passagem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PassagemController extends Controller
 {
@@ -66,12 +67,36 @@ class PassagemController extends Controller
         return redirect()->route('passagens.index')->with('success', 'Passagem removida com sucesso!');
     }
 
-    public function comprar(Request $request)
-    {
+    public function comprar(Request $request) {}
 
-    }
+    public function adicionar(Request $request) {}
 
-    public function adicionar(Request $request)
+    public function salvarPassagem(Request $request)
     {
+        $request->validate([
+            'id' => 'required|exists:PASSAGENS,id'
+        ]);
+
+        $passagem = Passagem::findOrFail($request->id);
+
+        $userId = Auth::id();
+
+        if ($passagem->PAS_SALVADA) {
+            $salvadas = json_decode($passagem->PAS_SALVADA, true);
+
+            if (!in_array($userId, $salvadas)) {
+                $salvadas[] = $userId;
+            }
+        } else {
+            $salvadas = [$userId];
+        }
+
+        $passagem->PAS_SALVADA = json_encode($salvadas);
+        $passagem->save();
+
+        return response()->json([
+            'message' => 'Passagem salva com sucesso!',
+            'passagem' => $passagem
+        ]);
     }
 }
