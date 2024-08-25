@@ -185,11 +185,11 @@
             <div id="div-label" class="nome">
                 <label for="US_NOME" class="label-nome">
                     Nome Completo
-                    <input type="text" name="US_NOME" placeholder="Nome Completo" id="US_NOME" required>
+                    <input type="text" name="US_NOME" placeholder="Nome Completo" id="US_NOME">
                 </label>
                 <label for="US_NOME" class="label-empresa">
                     Nome Empresa
-                    <input type="text" name="US_NOME" placeholder="Nome Completo" id="US_NOME" required>
+                    <input type="text" name="US_NOME" placeholder="Nome Completo" id="US_NOME_EMP">
                 </label>
             </div>
             <div id="div-label" class="email">

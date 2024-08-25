@@ -223,17 +223,20 @@
                 <li><a href="">Buscar Passagens</a></li>
             </ul>
             <div class="profile-session">
-                <a href="">
-                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
+                <a href="#">
+                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z"
                             stroke="#2C3E50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </a>
-                <a href="">
-                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
+
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M15 16.5V19C15 20.1046 14.1046 21 13 21H6C4.89543 21 4 20.1046 4 19V5C4 3.89543 4.89543 3 6 3H13C14.1046 3 15 3.89543 15 5V8.0625M11 12H21M21 12L18.5 9.5M21 12L18.5 14.5"
                             stroke="#A51111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -262,7 +265,7 @@
 
 
     <div class="modal-sell">
-        <p>oiiii modalzinho</p>
+        <p></p>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -272,7 +275,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const slides = document.querySelectorAll('.text-slide');
             let currentSlide = 0;
 
@@ -311,7 +314,7 @@
 
             overlayBackground.addEventListener('click', closeModal);
 
-            document.querySelector('.filter').addEventListener('click', function(e) {
+            document.querySelector('.filter').addEventListener('click', function (e) {
                 e.stopPropagation();
                 modalSell.style.display = 'flex';
                 overlayBackground.style.display = 'block';
