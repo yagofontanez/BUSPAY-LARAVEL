@@ -49,4 +49,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/passagens', [PassagemController::class, 'index'])->name('passagens.index');
     Route::post('passagens/comprar', [PassagemController::class, 'comprar'])->name('passagens.comprar');
     Route::post('passagens/adicionar', [PassagemController::class, 'adicionar'])->name('passagens.adicionar');
+
+    Route::post('/vender-passagem', [PassagemController::class, 'store'])->name('passagens.store');
 });

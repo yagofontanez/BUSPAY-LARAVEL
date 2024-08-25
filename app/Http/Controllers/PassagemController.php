@@ -41,9 +41,24 @@ class PassagemController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'PAS_ESTADOIDA' => 'required|string',
+            'PAS_CIDADEIDA' => 'required|string',
+            'PAS_ESTADOVOLTA' => 'nullable|string',
+            'PAS_CIDADEVOLTA' => 'nullable|string',
+            'PAS_HORASIDA' => 'required|date_format:H:i',
+            'PAS_HORASVOLTA' => 'nullable|date_format:H:i',
+            'PAS_DIAIDA' => 'required|date',
+            'PAS_DIAVOLTA' => 'nullable|date',
+            'PAS_PRECO' => 'required|numeric',
+            'PAS_EMPRESA' => 'required|string',
+        ]);
+
         $passagem = Passagem::create($request->all());
-        return redirect()->route('passagens.index')->with('success', 'Passagem adicionada com sucesso!');
+
+        return view('vender-passagem')->with('success', 'Passagem adicionada com sucesso!');
     }
+
 
     public function show(Passagem $passagem)
     {
@@ -67,9 +82,13 @@ class PassagemController extends Controller
         return redirect()->route('passagens.index')->with('success', 'Passagem removida com sucesso!');
     }
 
-    public function comprar(Request $request) {}
+    public function comprar(Request $request)
+    {
+    }
 
-    public function adicionar(Request $request) {}
+    public function adicionar(Request $request)
+    {
+    }
 
     public function salvarPassagem(Request $request)
     {

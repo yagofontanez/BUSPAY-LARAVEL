@@ -194,6 +194,81 @@
             border-radius: 15px;
             border: 3px solid #2C3E50;
             padding: 20px;
+            color: #2C3E50;
+        }
+
+        .modal-sell {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            width: 600px;
+            background-color: #fff;
+            color: #2C3E50;
+            border-radius: 15px;
+            border: 3px solid #2C3E50;
+        }
+
+        .modal-sell form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-grid {
+            display: grid;
+            align-items: center;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+        }
+
+        .grid-item label {
+            display: flex;
+            flex-direction: column;
+            font-weight: 600;
+            font-size: 14px;
+            color: #2C3E50;
+        }
+
+        .grid-item select,
+        .grid-item input {
+            height: 35px;
+            padding: 5px 10px;
+            border: 1px solid #2C3E50;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #2C3E50;
+        }
+
+        .grid-item input[type="date"] {
+            padding: 0 10px;
+        }
+
+        .grid-item select:focus,
+        .grid-item input:focus {
+            border-color: #06111d;
+            outline: 1px solid #06111d;
+            box-shadow: 0px 3px 10px -4px rgba(6, 17, 29, 0.5);
+        }
+
+        button[type="submit"] {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #1bd1b5;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #07806d;
         }
 
         #overlay {
@@ -265,14 +340,205 @@
 
 
     <div class="modal-sell">
-        <p></p>
+        <h1>Cadastrar Passagem</h1>
+        <form action="{{ route('passagens.store') }}" method="POST">
+            @csrf
+            <div class="form-grid">
+                <div class="grid-item">
+                    <label for="PAS_ESTADOIDA">
+                        Estado Ida:
+                        <select name="PAS_ESTADOIDA" id="PAS_ESTADOIDA">
+                            <option value="">Selecione um Estado</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="grid-item">
+                    <label for="PAS_CIDADEIDA">
+                        Cidade Ida:
+                        <select name="PAS_CIDADEIDA" id="PAS_CIDADEIDA">
+                            <option value="">Selecione uma Cidade</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="grid-item">
+                    <label for="PAS_ESTADOVOLTA">
+                        Estado Volta:
+                        <select name="PAS_ESTADOVOLTA" id="PAS_ESTADOVOLTA">
+                            <option value="">Selecione um Estado</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="grid-item">
+                    <label for="PAS_CIDADEVOLTA">
+                        Cidade Volta:
+                        <select name="PAS_CIDADEVOLTA" id="PAS_CIDADEVOLTA">
+                            <option value="">Selecione uma Cidade</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="grid-item">
+                    <label for="PAS_HORASIDA">
+                        Horário Ida:
+                        <input
+                            type="text"
+                            name="PAS_HORASIDA"
+                            id="PAS_HORASIDA"
+                            maxlength="5"
+                            oninput="formatTime(this)"
+                            onkeypress="allowOnlyNumbers(event)"
+                        >
+                    </label>
+                </div>
+                <div class="grid-item">
+                    <label for="PAS_HORASVOLTA">
+                        Horário Volta:
+                        <input
+                            type="text"
+                            name="PAS_HORASVOLTA"
+                            id="PAS_HORASVOLTA"
+                            maxlength="5"
+                            oninput="formatTime(this)"
+                            onkeypress="allowOnlyNumbers(event)"
+                        >
+                    </label>
+                </div>
+                <div class="grid-item">
+                    <label for="PAS_DIAIDA">
+                        Dia Ida:
+                        <input type="date" name="PAS_DIAIDA" id="PAS_DIAIDA">
+                    </label>
+                </div>
+                <div class="grid-item">
+                    <label for="PAS_DIAVOLTA">
+                        Dia Volta:
+                        <input type="date" name="PAS_DIAVOLTA" id="PAS_DIAVOLTA">
+                    </label>
+                </div>
+                <div class="grid-item">
+                    <label for="PAS_PRECO">
+                        Preço da Passagem:
+                        <input type="text" inputmode="numeric" name="PAS_PRECO" id="PAS_PRECO"
+                            onblur="formatPrice(this)" onkeypress="allowOnlyNumbers(event)">
+                    </label>
+                </div>
+                <div class="grid-item">
+                    <label for="PAS_EMPRESA">
+                        Empresa:
+                        <input type="text" name="PAS_EMPRESA" id="PAS_EMPRESA">
+                    </label>
+                </div>
+            </div>
+            <button type="submit">Anunciar</button>
+        </form>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script>
+        function formatPrice(input) {
+            let value = input.value.trim();
+
+            if (value !== "") {
+                let num = Number(value.replace(',', '.'));
+
+                if (!isNaN(num)) {
+                    input.value = num.toFixed(2).replace('.', ',');
+                }
+            }
+        }
+
+        function allowOnlyNumbers(event) {
+            let charCode = event.which ? event.which : event.keyCode;
+            if (charCode < 48 || charCode > 57) {
+                event.preventDefault();
+            }
+        }
+
+        function formatTime(input) {
+            let value = input.value.replace(/\D/g, '');
+
+            if (value.length >= 2) {
+                value = value.slice(0, 2) + ':' + value.slice(2, 4);
+            }
+
+            input.value = value;
+        }
+
+
+    </script>
+
+    <script>
+        async function getCidades(estadoId, cidadeSelectId) {
+            try {
+                const response = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estadoId}/municipios?orderBy=nome`);
+                const cidades = response.data;
+
+                const cidadeSelect = document.getElementById(cidadeSelectId);
+                cidadeSelect.innerHTML = '<option value="">Selecione uma Cidade</option>';
+
+                cidades.forEach((cidade) => {
+                    const option = document.createElement('option');
+                    option.value = cidade.nome;
+                    option.textContent = cidade.nome;
+                    cidadeSelect.appendChild(option);
+                });
+            } catch (e) {
+                console.log('Erro ao buscar cidades: ', e);
+            }
+        }
+
+
+        async function getEstados() {
+            try {
+                const response = await axios.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome');
+                const estados = response.data;
+
+                const estadoIdaSelect = document.getElementById('PAS_ESTADOIDA');
+                const estadoVoltaSelect = document.getElementById('PAS_ESTADOVOLTA');
+                estadoIdaSelect.innerHTML = '<option value="">Selecione um Estado</option>';
+                estadoVoltaSelect.innerHTML = '<option value="">Selecione um Estado</option>';
+
+                estados.forEach((estado) => {
+                    const optionIda = document.createElement('option');
+                    optionIda.value = estado.nome;
+                    optionIda.textContent = estado.nome;
+                    estadoIdaSelect.appendChild(optionIda);
+
+                    const optionVolta = document.createElement('option');
+                    optionVolta.value = estado.nome;
+                    optionVolta.textContent = estado.nome;
+                    estadoVoltaSelect.appendChild(optionVolta);
+                });
+            } catch (e) {
+                console.log('Erro ao buscar estados: ', e);
+            }
+        }
+    </script>
+
+    <script>
+        document.getElementById('PAS_ESTADOIDA').addEventListener('change', function () {
+            const estadoId = this.value;
+            if (estadoId) {
+                getCidades(estadoId, 'PAS_CIDADEIDA');
+            } else {
+                document.getElementById('PAS_CIDADEIDA').innerHTML = '<option value="">Selecione uma Cidade</option>';
+            }
+        });
+
+        document.getElementById('PAS_ESTADOVOLTA').addEventListener('change', function () {
+            const estadoId = this.value;
+            if (estadoId) {
+                getCidades(estadoId, 'PAS_CIDADEVOLTA');
+            } else {
+                document.getElementById('PAS_CIDADEVOLTA').innerHTML = '<option value="">Selecione uma Cidade</option>';
+            }
+        });
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -306,6 +572,9 @@
 
             modalSell.style.display = 'flex';
             overlayBackground.style.display = 'block';
+
+            getEstados();
+            getCidades();
 
             function closeModal() {
                 modalSell.style.display = 'none';
