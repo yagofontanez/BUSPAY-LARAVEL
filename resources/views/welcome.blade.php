@@ -168,7 +168,7 @@
                         <a href="{{ route('cadastro') }}">
                             <button id="btn-cadastrar">Cadastrar</button>
                         </a>
-                        <a href="#">Saiba Mais</a>
+                        <a target="_blank" href="https://github.com/yagofontanez/BUSPAY-LARAVEL">Saiba Mais</a>
                     </div>
                 </div>
             </div>

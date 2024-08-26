@@ -379,27 +379,15 @@
                 <div class="grid-item">
                     <label for="PAS_HORASIDA">
                         Horário Ida:
-                        <input
-                            type="text"
-                            name="PAS_HORASIDA"
-                            id="PAS_HORASIDA"
-                            maxlength="5"
-                            oninput="formatTime(this)"
-                            onkeypress="allowOnlyNumbers(event)"
-                        >
+                        <input type="text" name="PAS_HORASIDA" id="PAS_HORASIDA" maxlength="5"
+                            oninput="formatTime(this)" onkeypress="allowOnlyNumbers(event)">
                     </label>
                 </div>
                 <div class="grid-item">
                     <label for="PAS_HORASVOLTA">
                         Horário Volta:
-                        <input
-                            type="text"
-                            name="PAS_HORASVOLTA"
-                            id="PAS_HORASVOLTA"
-                            maxlength="5"
-                            oninput="formatTime(this)"
-                            onkeypress="allowOnlyNumbers(event)"
-                        >
+                        <input type="text" name="PAS_HORASVOLTA" id="PAS_HORASVOLTA" maxlength="5"
+                            oninput="formatTime(this)" onkeypress="allowOnlyNumbers(event)">
                     </label>
                 </div>
                 <div class="grid-item">
@@ -493,6 +481,8 @@
         }
 
 
+        let estadoMap = {};
+
         async function getEstados() {
             try {
                 const response = await axios.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome');
@@ -504,20 +494,76 @@
                 estadoVoltaSelect.innerHTML = '<option value="">Selecione um Estado</option>';
 
                 estados.forEach((estado) => {
+                    estadoMap[estado.id] = estado.sigla;
+
                     const optionIda = document.createElement('option');
-                    optionIda.value = estado.nome;
-                    optionIda.textContent = estado.nome;
+                    optionIda.value = estado.sigla;
+                    optionIda.textContent = estado.sigla;
                     estadoIdaSelect.appendChild(optionIda);
 
                     const optionVolta = document.createElement('option');
-                    optionVolta.value = estado.nome;
-                    optionVolta.textContent = estado.nome;
+                    optionVolta.value = estado.sigla;
+                    optionVolta.textContent = estado.sigla;
                     estadoVoltaSelect.appendChild(optionVolta);
                 });
             } catch (e) {
                 console.log('Erro ao buscar estados: ', e);
             }
         }
+
+        function formatTime(input) {
+            let value = input.value.replace(/\D/g, '');
+
+            if (value.length >= 2) {
+                let hours = value.slice(0, 2);
+                let minutes = value.slice(2, 4) || '00';
+                value = `${hours}:${minutes}`;
+            }
+
+            input.value = value;
+        }
+
+        function addSeconds(input) {
+            let value = input.value;
+
+            if (value.length === 5) {
+                value = `${value}:00`;
+            }
+
+            input.value = value;
+        }
+
+        document.querySelector('form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            addSeconds(document.getElementById('PAS_HORASIDA'));
+            addSeconds(document.getElementById('PAS_HORASVOLTA'));
+
+            let formData = new FormData(this);
+
+            axios.post(this.action, formData)
+                .then(function (response) {
+                    if (response.status === 200) {
+                        Toastify({
+                            text: "Passagem cadastrada com sucesso!",
+                            className: "info",
+                            style: {
+                                background: "#96c93d",
+                            }
+                        }).showToast();
+                    }
+                })
+                .catch(function (error) {
+                    Toastify({
+                        text: "Erro ao cadastrar a passagem.",
+                        className: "error",
+                        style: {
+                            background: "rgba(255, 0, 0, 0.5)",
+                        }
+                    }).showToast();
+                });
+        });
+
     </script>
 
     <script>

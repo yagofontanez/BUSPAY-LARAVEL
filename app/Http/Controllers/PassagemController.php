@@ -46,18 +46,22 @@ class PassagemController extends Controller
             'PAS_CIDADEIDA' => 'required|string',
             'PAS_ESTADOVOLTA' => 'nullable|string',
             'PAS_CIDADEVOLTA' => 'nullable|string',
-            'PAS_HORASIDA' => 'required|date_format:H:i',
-            'PAS_HORASVOLTA' => 'nullable|date_format:H:i',
+            'PAS_HORASIDA' => 'required|string',
+            'PAS_HORASVOLTA' => 'nullable|string',
             'PAS_DIAIDA' => 'required|date',
             'PAS_DIAVOLTA' => 'nullable|date',
-            'PAS_PRECO' => 'required|numeric',
+            'PAS_PRECO' => 'required|string',
             'PAS_EMPRESA' => 'required|string',
         ]);
 
-        $passagem = Passagem::create($request->all());
+        $data = $request->all();
+        $data['PAS_PRECO'] = str_replace(',', '.', $data['PAS_PRECO']);
+
+        $passagem = Passagem::create($data);
 
         return view('vender-passagem')->with('success', 'Passagem adicionada com sucesso!');
     }
+
 
 
     public function show(Passagem $passagem)
