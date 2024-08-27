@@ -39,12 +39,14 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
     Route::patch('/passagens/salvar', [PassagemController::class, 'salvarPassagem'])->name('passagens.salvar');
     Route::get('/home', [PassagemController::class, 'index'])->name('home');
+    Route::get('/vender-passagem', [PassagemController::class, 'index_vender'])->name('vender-passagem');
+    Route::delete('/delete-passagem/{id}', [PassagemController::class, 'destroy'])->name('delete-passagem');
 
     Route::resource('passagens', PassagemController::class);
 
-    Route::get('/venderpassagem', function() {
-        return view('vender-passagem');
-    })->name('vender-passagem');
+    // Route::get('/venderpassagem', function() {
+    //     return view('vender-passagem');
+    // })->name('vender-passagem');
 
     Route::get('/passagens', [PassagemController::class, 'index'])->name('passagens.index');
     Route::post('passagens/comprar', [PassagemController::class, 'comprar'])->name('passagens.comprar');

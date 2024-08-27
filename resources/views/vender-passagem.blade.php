@@ -271,6 +271,47 @@
             background-color: #07806d;
         }
 
+        .linha-dados {
+            display: grid;
+            grid-template-columns: 17fr 8fr 9fr 1fr 1fr;
+            align-items: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-bottom: 1px solid #d4d4d4;
+            gap: 1rem;
+        }
+
+        .linha-dados button {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 50%;
+            background-color: #2C3E50;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .linha-dados button:hover {
+            background-color: #112233;
+        }
+
+        .listagem-passagens-vendidas {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 96vw;
+            margin: 2rem auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 15px;
+        }
+
+        .input-empresa {
+            background-color: rgb(0 0 0 / 24%);
+        }
+
+
         #overlay {
             display: none;
             position: fixed;
@@ -299,7 +340,8 @@
             </ul>
             <div class="profile-session">
                 <a href="#">
-                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z"
                             stroke="#2C3E50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -311,7 +353,8 @@
                 </form>
 
                 <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M15 16.5V19C15 20.1046 14.1046 21 13 21H6C4.89543 21 4 20.1046 4 19V5C4 3.89543 4.89543 3 6 3H13C14.1046 3 15 3.89543 15 5V8.0625M11 12H21M21 12L18.5 9.5M21 12L18.5 14.5"
                             stroke="#A51111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -335,8 +378,43 @@
     </div>
 
     <div class="listagem-passagens-vendidas">
-
+        <h3 style="color: #2C3E50">Passagens Anunciadas da sua Empresa</h3>
+        @foreach ($passagens as $passagem)
+            <div class="linha-dados">
+                <p>{{ $passagem->PAS_CIDADEIDA }}/{{ $passagem->PAS_ESTADOIDA }} -
+                    {{ $passagem->PAS_CIDADEVOLTA }}/{{ $passagem->PAS_ESTADOVOLTA }}</p>
+                <p>R${{ number_format($passagem->PAS_PRECO, 2, ',', '.') }}</p>
+                <p>{{ \Carbon\Carbon::parse($passagem->PAS_HORASIDA)->setTimezone('America/Sao_Paulo')->format('H:i') }}
+                </p>
+                <button>
+                    <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M9.75 12C9.75 10.7574 10.7574 9.75 12 9.75C13.2426 9.75 14.25 10.7574 14.25 12C14.25 13.2426 13.2426 14.25 12 14.25C10.7574 14.25 9.75 13.2426 9.75 12Z"
+                            fill="#fff" />
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M2 12C2 13.6394 2.42496 14.1915 3.27489 15.2957C4.97196 17.5004 7.81811 20 12 20C16.1819 20 19.028 17.5004 20.7251 15.2957C21.575 14.1915 22 13.6394 22 12C22 10.3606 21.575 9.80853 20.7251 8.70433C19.028 6.49956 16.1819 4 12 4C7.81811 4 4.97196 6.49956 3.27489 8.70433C2.42496 9.80853 2 10.3606 2 12ZM12 8.25C9.92893 8.25 8.25 9.92893 8.25 12C8.25 14.0711 9.92893 15.75 12 15.75C14.0711 15.75 15.75 14.0711 15.75 12C15.75 9.92893 14.0711 8.25 12 8.25Z"
+                            fill="#fff" />
+                    </svg>
+                </button>
+                <button>
+                    {{-- <a href="{{ route('delete-passagem') }}"> --}}
+                        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6"
+                                stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    {{-- </a> --}}
+                </button>
+            </div>
+        @endforeach
     </div>
+
+    <div class="pagination">
+        {{ $passagens->links() }}
+    </div>
+
 
 
     <div class="modal-sell">
@@ -412,7 +490,7 @@
                 <div class="grid-item">
                     <label for="PAS_EMPRESA">
                         Empresa:
-                        <input type="text" name="PAS_EMPRESA" id="PAS_EMPRESA">
+                        <input class="input-empresa" type="text" name="PAS_EMPRESA" id="PAS_EMPRESA" value="{{ $empresaNome }}" readonly>
                     </label>
                 </div>
             </div>
@@ -456,14 +534,14 @@
 
             input.value = value;
         }
-
-
     </script>
 
     <script>
         async function getCidades(estadoId, cidadeSelectId) {
             try {
-                const response = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estadoId}/municipios?orderBy=nome`);
+                const response = await axios.get(
+                    `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estadoId}/municipios?orderBy=nome`
+                );
                 const cidades = response.data;
 
                 const cidadeSelect = document.getElementById(cidadeSelectId);
@@ -485,7 +563,8 @@
 
         async function getEstados() {
             try {
-                const response = await axios.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome');
+                const response = await axios.get(
+                    'https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome');
                 const estados = response.data;
 
                 const estadoIdaSelect = document.getElementById('PAS_ESTADOIDA');
@@ -533,7 +612,7 @@
             input.value = value;
         }
 
-        document.querySelector('form').addEventListener('submit', function (event) {
+        document.querySelector('form').addEventListener('submit', function(event) {
             event.preventDefault();
 
             addSeconds(document.getElementById('PAS_HORASIDA'));
@@ -542,7 +621,7 @@
             let formData = new FormData(this);
 
             axios.post(this.action, formData)
-                .then(function (response) {
+                .then(function(response) {
                     if (response.status === 200) {
                         Toastify({
                             text: "Passagem cadastrada com sucesso!",
@@ -553,7 +632,7 @@
                         }).showToast();
                     }
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     Toastify({
                         text: "Erro ao cadastrar a passagem.",
                         className: "error",
@@ -563,31 +642,32 @@
                     }).showToast();
                 });
         });
-
     </script>
 
     <script>
-        document.getElementById('PAS_ESTADOIDA').addEventListener('change', function () {
+        document.getElementById('PAS_ESTADOIDA').addEventListener('change', function() {
             const estadoId = this.value;
             if (estadoId) {
                 getCidades(estadoId, 'PAS_CIDADEIDA');
             } else {
-                document.getElementById('PAS_CIDADEIDA').innerHTML = '<option value="">Selecione uma Cidade</option>';
+                document.getElementById('PAS_CIDADEIDA').innerHTML =
+                    '<option value="">Selecione uma Cidade</option>';
             }
         });
 
-        document.getElementById('PAS_ESTADOVOLTA').addEventListener('change', function () {
+        document.getElementById('PAS_ESTADOVOLTA').addEventListener('change', function() {
             const estadoId = this.value;
             if (estadoId) {
                 getCidades(estadoId, 'PAS_CIDADEVOLTA');
             } else {
-                document.getElementById('PAS_CIDADEVOLTA').innerHTML = '<option value="">Selecione uma Cidade</option>';
+                document.getElementById('PAS_CIDADEVOLTA').innerHTML =
+                    '<option value="">Selecione uma Cidade</option>';
             }
         });
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const slides = document.querySelectorAll('.text-slide');
             let currentSlide = 0;
 
@@ -629,7 +709,7 @@
 
             overlayBackground.addEventListener('click', closeModal);
 
-            document.querySelector('.filter').addEventListener('click', function (e) {
+            document.querySelector('.filter').addEventListener('click', function(e) {
                 e.stopPropagation();
                 modalSell.style.display = 'flex';
                 overlayBackground.style.display = 'block';

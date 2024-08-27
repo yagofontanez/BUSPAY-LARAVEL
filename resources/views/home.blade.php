@@ -516,7 +516,8 @@
             </ul>
             <div class="profile-session">
                 <a href="#">
-                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z"
                             stroke="#2C3E50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -528,7 +529,8 @@
                 </form>
 
                 <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M15 16.5V19C15 20.1046 14.1046 21 13 21H6C4.89543 21 4 20.1046 4 19V5C4 3.89543 4.89543 3 6 3H13C14.1046 3 15 3.89543 15 5V8.0625M11 12H21M21 12L18.5 9.5M21 12L18.5 14.5"
                             stroke="#A51111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -581,8 +583,9 @@
                     <p>A: </p>
                     <input type="date" name="date_to" id="date_to">
                     <button type="submit">
-                        <svg height="20px" width="20px" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg"
-                            xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve">
+                        <svg height="20px" width="20px" version="1.1" id="_x32_"
+                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                            viewBox="0 0 512 512" xml:space="preserve">
                             <style type="text/css">
                                 .st0 {
                                     fill: #fff;
@@ -619,13 +622,15 @@
                     <p>{{ \Carbon\Carbon::parse($passagem->PAS_HORASIDA)->setTimezone('America/Sao_Paulo')->format('H:i') }}
                     </p>
                     <button class="salvar-passagem" data-id="{{ $passagem->id }}">
-                        <svg fill="#fff" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg fill="#fff" width="20px" height="20px" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M20.808,11.079C19.829,16.132,12,20.5,12,20.5s-7.829-4.368-8.808-9.421C2.227,6.1,5.066,3.5,8,3.5a4.444,4.444,0,0,1,4,2,4.444,4.444,0,0,1,4-2C18.934,3.5,21.773,6.1,20.808,11.079Z" />
                         </svg>
                     </button>
                     <button>
-                        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M21 5L19 12H7.37671M20 16H8L6 3H3M16 5.5H13.5M13.5 5.5H11M13.5 5.5V8M13.5 5.5V3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z"
                                 stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -643,24 +648,25 @@
             @if ($currentPage > 1)
                 <a href="{{ url()->current() }}?page={{ $currentPage - 1 }}" class="pagination-prev">
                     < </a>
-            @else
-                <span class="pagination-prev disabled">
-                    < </span>
+                    @else
+                        <span class="pagination-prev disabled">
+                            < </span>
             @endif
 
-                            @for ($i = 1; $i <= $totalPages; $i++)
-                                @if ($i == $currentPage)
-                                    <span class="pagination-page current">{{ $i }}</span>
-                                @else
-                                    <a href="{{ url()->current() }}?page={{ $i }}" class="pagination-page">{{ $i }}</a>
-                                @endif
-                            @endfor
+            @for ($i = 1; $i <= $totalPages; $i++)
+                @if ($i == $currentPage)
+                    <span class="pagination-page current">{{ $i }}</span>
+                @else
+                    <a href="{{ url()->current() }}?page={{ $i }}"
+                        class="pagination-page">{{ $i }}</a>
+                @endif
+            @endfor
 
-                            @if ($currentPage < $totalPages)
-                                <a href="{{ url()->current() }}?page={{ $currentPage + 1 }}" class="pagination-next"> > </a>
-                            @else
-                                <span class="pagination-next disabled"> > </span>
-                            @endif
+            @if ($currentPage < $totalPages)
+                <a href="{{ url()->current() }}?page={{ $currentPage + 1 }}" class="pagination-next"> > </a>
+            @else
+                <span class="pagination-next disabled"> > </span>
+            @endif
         </div>
 
     </div>
@@ -670,7 +676,8 @@
         <div class="inputs-filter">
             <label class="label-filter" for="busca-cidade-ida">
                 Busca por Cidade Ida
-                <input type="text" name="busca-cidade-ida" id="busca-cidade-ida" placeholder="Digite a Cidade de Ida">
+                <input type="text" name="busca-cidade-ida" id="busca-cidade-ida"
+                    placeholder="Digite a Cidade de Ida">
             </label>
             <label class="label-filter" for="busca-cidade-volta">
                 Busca por Cidade Volta
@@ -735,20 +742,20 @@
     const btnSalvar = document.querySelectorAll('.salvar-passagem');
 
     btnSalvar.forEach((button) => {
-        button.addEventListener('click', function (e) {
+        button.addEventListener('click', function(e) {
             e.preventDefault();
             const passagemId = this.getAttribute('data-id');
 
             fetch('{{ route('passagens.salvar') }}', {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    id: passagemId
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        id: passagemId
+                    })
                 })
-            })
                 .then(response => response.json())
                 .then(data => {
                     Toastify({
@@ -788,7 +795,7 @@
 
         overlayBackground.addEventListener('click', closeModal);
 
-        document.querySelector('.filter').addEventListener('click', function (e) {
+        document.querySelector('.filter').addEventListener('click', function(e) {
             e.stopPropagation();
             modalFiltros.style.display = 'flex';
             overlayBackground.style.display = 'block';
@@ -798,7 +805,7 @@
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const particlesJs = document.getElementById('particles-js');
         particlesJs.style.height = document.body.scrollHeight + 'px';
     });

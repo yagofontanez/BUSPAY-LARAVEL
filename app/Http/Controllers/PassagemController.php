@@ -34,6 +34,35 @@ class PassagemController extends Controller
         ]);
     }
 
+    public function index_vender(Request $request)
+    {
+
+        $user = Auth::user();
+        $empresaNome = $user->US_NOME;
+        $query = Passagem::query();
+        $query->where('PAS_EMPRESA', $empresaNome);
+
+        if ($request->has('date_from') && $request->get('date_from')) {
+            $query->where('PAS_DIAIDA', '>=', $request->get('date_from'));
+        }
+
+        if ($request->has('date_to') && $request->get('date_to')) {
+            $query->where('PAS_DIAVOLTA', '<=', $request->get('date_to'));
+        }
+
+        $perPage = 10;
+
+        $passagens = $query->paginate($perPage);
+
+        return view('vender-passagem', [
+            'passagens' => $passagens,
+            'currentPage' => $passagens->currentPage(),
+            'total' => $passagens->total(),
+            'perPage' => $perPage,
+            'empresaNome' => $empresaNome
+        ]);
+    }
+
     public function create()
     {
         return view('passagens.create');
@@ -59,7 +88,31 @@ class PassagemController extends Controller
 
         $passagem = Passagem::create($data);
 
-        return view('vender-passagem')->with('success', 'Passagem adicionada com sucesso!');
+        $user = Auth::user();
+        $empresaNome = $user->US_NOME;
+        $query = Passagem::query();
+        $query->where('PAS_EMPRESA', $empresaNome);
+
+        if ($request->has('date_from') && $request->get('date_from')) {
+            $query->where('PAS_DIAIDA', '>=', $request->get('date_from'));
+        }
+
+        if ($request->has('date_to') && $request->get('date_to')) {
+            $query->where('PAS_DIAVOLTA', '<=', $request->get('date_to'));
+        }
+
+        $perPage = 10;
+
+        $passagens = $query->paginate($perPage);
+
+        return view('vender-passagem', [
+            'passagens' => $passagens,
+            'currentPage' => $passagens->currentPage(),
+            'total' => $passagens->total(),
+            'perPage' => $perPage,
+        ])->with('success', 'Passagem adicionada com sucesso!');
+
+        // return view('vender-passagem')->with('success', 'Passagem adicionada com sucesso!');
     }
 
 
@@ -80,10 +133,26 @@ class PassagemController extends Controller
         return redirect()->route('passagens.index')->with('success', 'Passagem atualizada com sucesso!');
     }
 
-    public function destroy(Passagem $passagem)
+    public function destroy($id)
     {
+        $passagem = Passagem::findOrFail($id);
         $passagem->delete();
-        return redirect()->route('passagens.index')->with('success', 'Passagem removida com sucesso!');
+
+        $user = Auth::user();
+        $empresaNome = $user->US_NOME;
+        $query = Passagem::query();
+        $query->where('PAS_EMPRESA', $empresaNome);
+
+        $perPage = 10;
+
+        $passagens = $query->paginate($perPage);
+
+        return view('vender-passagem', [
+            'passagens' => $passagens,
+            'currentPage' => $passagens->currentPage(),
+            'total' => $passagens->total(),
+            'perPage' => $perPage,
+        ])->with('success', 'Passagem apagada com sucesso!');
     }
 
     public function comprar(Request $request)
