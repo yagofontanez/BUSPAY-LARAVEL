@@ -512,7 +512,6 @@
                         <a href="" onclick="event.preventDefault(); ShowModalRegister()">Vender</a>
                     @endif
                 </li>
-                <li><a href="">Buscar Passagens</a></li>
             </ul>
             <div class="profile-session">
                 <a href="#">

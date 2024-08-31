@@ -110,6 +110,7 @@ class PassagemController extends Controller
             'currentPage' => $passagens->currentPage(),
             'total' => $passagens->total(),
             'perPage' => $perPage,
+            'empresaNome' => $empresaNome
         ])->with('success', 'Passagem adicionada com sucesso!');
 
         // return view('vender-passagem')->with('success', 'Passagem adicionada com sucesso!');
@@ -152,6 +153,7 @@ class PassagemController extends Controller
             'currentPage' => $passagens->currentPage(),
             'total' => $passagens->total(),
             'perPage' => $perPage,
+            'empresaNome' => $empresaNome,
         ])->with('success', 'Passagem apagada com sucesso!');
     }
 

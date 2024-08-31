@@ -178,7 +178,8 @@
             transform: translateX(-100%);
         }
 
-        .modal-sell {
+        .modal-sell,
+        .modal-passagem {
             display: none;
             align-items: center;
             flex-direction: column;
@@ -311,6 +312,38 @@
             background-color: rgb(0 0 0 / 24%);
         }
 
+        .container-visualizacao-passagem {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .container-visualizacao-passagem .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 28rem;
+            font-size: 20px;
+            border-bottom: 0.1rem solid #d4d4d4;
+        }
+
+        .btn-voltar-modal {
+            padding: 5px 10px;
+            border-radius: 7px;
+            color: #fff;
+            background-color: #2C3E50;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            margin-top: 2rem;
+            font-size: 18px;
+        }
+
+        .btn-voltar-modal:hover {
+            background-color: #112233;
+        }
 
         #overlay {
             display: none;
@@ -336,7 +369,6 @@
                     <a href="{{ route('home') }}">Comprar</a>
                 </li>
                 <li><a href="{{ route('vender-passagem') }}">Vender</a></li>
-                <li><a href="">Buscar Passagens</a></li>
             </ul>
             <div class="profile-session">
                 <a href="#">
@@ -386,7 +418,18 @@
                 <p>R${{ number_format($passagem->PAS_PRECO, 2, ',', '.') }}</p>
                 <p>{{ \Carbon\Carbon::parse($passagem->PAS_HORASIDA)->setTimezone('America/Sao_Paulo')->format('H:i') }}
                 </p>
-                <button>
+                <button
+                    onclick="showModalPassagem({
+                    cidadeIda: '{{ $passagem->PAS_CIDADEIDA }} - {{ $passagem->PAS_ESTADOIDA }}',
+                    estadoIda: '{{ $passagem->PAS_ESTADOIDA }}',
+                    cidadeVolta: '{{ $passagem->PAS_CIDADEVOLTA }} - {{ $passagem->PAS_ESTADOVOLTA }}',
+                    estadoVolta: '{{ $passagem->PAS_ESTADOVOLTA }}',
+                    horarioIda: '{{ \Carbon\Carbon::parse($passagem->PAS_HORASIDA)->setTimezone('America/Sao_Paulo')->format('H:i') }}',
+                    horarioVolta: '{{ \Carbon\Carbon::parse($passagem->PAS_HORASVOLTA)->setTimezone('America/Sao_Paulo')->format('H:i') }}',
+                    diaIda: '{{ $passagem->PAS_DIAIDA }}',
+                    diaVolta: '{{ $passagem->PAS_DIAVOLTA }}',
+                    preco: '{{ number_format($passagem->PAS_PRECO, 2, ',', '.') }}'
+                })">
                     <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -399,23 +442,17 @@
                 </button>
                 <button>
                     {{-- <a href="{{ route('delete-passagem') }}"> --}}
-                        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6"
-                                stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
+                    <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6"
+                            stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
                     {{-- </a> --}}
                 </button>
             </div>
         @endforeach
     </div>
-
-    <div class="pagination">
-        {{ $passagens->links() }}
-    </div>
-
-
 
     <div class="modal-sell">
         <h1>Cadastrar Passagem</h1>
@@ -490,7 +527,8 @@
                 <div class="grid-item">
                     <label for="PAS_EMPRESA">
                         Empresa:
-                        <input class="input-empresa" type="text" name="PAS_EMPRESA" id="PAS_EMPRESA" value="{{ $empresaNome }}" readonly>
+                        <input class="input-empresa" type="text" name="PAS_EMPRESA" id="PAS_EMPRESA"
+                            value="{{ $empresaNome }}" readonly>
                     </label>
                 </div>
             </div>
@@ -498,12 +536,93 @@
         </form>
     </div>
 
+    <div class="modal-passagem">
+        <h2>Passagem selecionada:</h2>
+        <div class="container-visualizacao-passagem">
+            <div class="container">
+                <span>Cidade Ida:</span>
+                <p></p>
+            </div>
+            <div class="container">
+                <span>Cidade Volta:</span>
+                <p></p>
+            </div>
+            <div class="container">
+                <span>Horário Ida:</span>
+                <p></p>
+            </div>
+            <div class="container">
+                <span>Horário Volta:</span>
+                <p></p>
+            </div>
+            <div class="container">
+                <span>Dia Ida:</span>
+                <p></p>
+            </div>
+            <div class="container">
+                <span>Dia Volta:</span>
+                <p></p>
+            </div>
+            <div class="container">
+                <span>Preço:</span>
+                <p></p>
+            </div>
+            <button onclick="closeModal()" class="btn-voltar-modal">Voltar</button>
+        </div>
+        <span></span>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script>
+        const showModalPassagem = (passagem) => {
+            const modalPassagem = document.querySelector('.modal-passagem');
+            const overlayBackground = document.getElementById('overlay');
+
+            if (modalPassagem) {
+                const containers = modalPassagem.querySelectorAll('.container-visualizacao-passagem .container');
+
+                const diaIda = passagem.diaIda;
+                const diaFormatado = moment(diaIda).format('DD/MM/YYYY');
+
+                const diaVolta = passagem.diaVolta;
+                const diaVoltaFormatado = moment(diaVolta).format('DD/MM/YYYY');
+
+                containers[0].querySelector('p').textContent = passagem.cidadeIda;
+                containers[1].querySelector('p').textContent = passagem.cidadeVolta;
+                containers[2].querySelector('p').textContent = passagem.horarioIda;
+                containers[3].querySelector('p').textContent = passagem.horarioVolta;
+                containers[4].querySelector('p').textContent = diaFormatado;
+                containers[5].querySelector('p').textContent = diaVoltaFormatado;
+                containers[6].querySelector('p').textContent = 'R$ ' + passagem.preco;
+
+                modalPassagem.style.display = 'flex';
+                overlayBackground.style.display = 'block';
+
+                const closeModal = () => {
+                    modalPassagem.style.display = 'none';
+                    overlayBackground.style.display = 'none';
+                }
+
+                overlayBackground.addEventListener('click', closeModal);
+            } else {
+                console.error('Modal não encontrado!');
+            }
+        }
+
+        function closeModal() {
+            const modalPassagem = document.querySelector('.modal-passagem');
+            const overlayBackground = document.getElementById('overlay');
+            modalPassagem.style.display = 'none';
+            overlayBackground.style.display = 'none';
+        }
+    </script>
 
     <script>
         function formatPrice(input) {
@@ -630,6 +749,7 @@
                                 background: "#96c93d",
                             }
                         }).showToast();
+                        window.location.href = '/vender-passagem';
                     }
                 })
                 .catch(function(error) {

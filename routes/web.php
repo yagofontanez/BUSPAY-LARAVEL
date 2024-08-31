@@ -53,4 +53,11 @@ Route::middleware('auth')->group(function () {
     Route::post('passagens/adicionar', [PassagemController::class, 'adicionar'])->name('passagens.adicionar');
 
     Route::post('/vender-passagem', [PassagemController::class, 'store'])->name('passagens.store');
+
+
+
+
+    Route::get('home-adm', function() {
+        return view('home-adm');
+    })->name('home-adm');
 });
