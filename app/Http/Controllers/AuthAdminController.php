@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Passagem;
 
 class AuthAdminController extends Controller
 {
@@ -24,7 +25,29 @@ class AuthAdminController extends Controller
         if ($admin && Hash::check($credentials['ADM_SENHA'], $admin->ADM_SENHA)) {
             Auth::login($admin);
             $request->session()->regenerate();
-            return redirect()->intended('/home-adm')->with('success', 'Login realizado com sucesso!');
+
+            $query = Passagem::query();
+
+            if ($request->has('date_from') && $request->get('date_from')) {
+                $query->where('PAS_DIAIDA', '>=', $request->get('date_from'));
+            }
+
+            if ($request->has('date_to') && $request->get('date_to')) {
+                $query->where('PAS_DIAVOLTA', '<=', $request->get('date_to'));
+            }
+
+            $perPage = 10;
+            $page = $request->input('page', 1);
+            $total = $query->count();
+
+            $passagens = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+
+            return view('home-adm', [
+                'passagens' => $passagens,
+                'total' => $total,
+                'perPage' => $perPage,
+                'currentPage' => $page,
+            ])->with('success', 'Login realizado com sucesso!');
         }
 
         return back()->with('error', 'Falha ao autenticar administrador');

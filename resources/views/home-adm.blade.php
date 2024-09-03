@@ -59,7 +59,7 @@
         .button-expand-menu {
             position: relative;
             top: -20rem;
-            right: 48.5rem;
+            right: 1rem;
         }
 
         .button-expand-menu button {
@@ -106,6 +106,65 @@
             align-items: center;
             justify-content: center;
         }
+
+        .container-visualizacao-passagens {
+            display: none;
+            flex-direction: column;
+            width: 65%;
+            background: #fff;
+            padding: 10px 25px;
+            border-radius: 25px;
+        }
+
+        .tela-lado-direito {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .linha-dados {
+            display: grid;
+            grid-template-columns: 17fr 8fr 9fr 1fr 1fr;
+            align-items: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-bottom: 1px solid #d4d4d4;
+            gap: 1rem;
+            color: #2C3E50;
+        }
+
+        .linha-dados button {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 50%;
+            background-color: #2C3E50;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .linha-dados button:hover {
+            background-color: #112233;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #2C3E50;
+        }
+
+        .header button {
+            padding: 5px 10px;
+            color: #fff;
+            background: #2C3E50;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -119,7 +178,7 @@
                     <img src="{{ asset('assets/logo_buspay.jpg') }}" width="70px">
                 </div>
                 <ul class="ul-list">
-                    <li>Passagens</li>
+                    <li id="passagens">Passagens</li>
                     <li>Clientes</li>
                     <li>Empresas</li>
                 </ul>
@@ -160,9 +219,47 @@
                 </svg>
             </button>
         </div>
-        <div class="tela-lado-direito"></div>
+        <div class="tela-lado-direito">
+            <div class="container-visualizacao-passagens">
+                <div class="header">
+                    <h1>Visualização de Passagens</h1>
+                    <button>Adicionar</button>
+                </div>
+                <div class="listagem">
+                    @foreach ($passagens as $passagem)
+                        <div class="linha-dados">
+                            <p>
+                                {{ $passagem->PAS_CIDADEIDA }} / {{ $passagem->PAS_ESTADOIDA }} -
+                                {{ $passagem->PAS_CIDADEVOLTA }} / {{ $passagem->PAS_ESTADOVOLTA }}
+                            </p>
+                            <p>R${{ number_format($passagem->PAS_PRECO, 2, ',', '.') }}</p>
+                            <p>{{ \Carbon\Carbon::parse($passagem->PAS_HORASIDA)->setTimezone('America/Sao_Paulo')->format('H:i') }}
+                            </p>
+                            <button>
+                                <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6"
+                                        stroke="#fff" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                            <button>
+                                <svg width="20px" height="20px" viewBox="0 0 16 16" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8.29289 3.70711L1 11V15H5L12.2929 7.70711L8.29289 3.70711Z"
+                                        fill="#fff" />
+                                    <path
+                                        d="M9.70711 2.29289L13.7071 6.29289L15.1716 4.82843C15.702 4.29799 16 3.57857 16 2.82843C16 1.26633 14.7337 0 13.1716 0C12.4214 0 11.702 0.297995 11.1716 0.828428L9.70711 2.29289Z"
+                                        fill="#fff" />
+                                </svg>
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
     </div>
-
 
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -170,6 +267,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<script>
+    const containerPassagens = document.querySelector('.container-visualizacao-passagens');
+    const selectPassagem = document.getElementById('passagens');
+
+    selectPassagem.addEventListener('click', function(e) {
+        e.preventDefault();
+        containerPassagens.style.display = 'flex';
+    })
+</script>
 
 <script>
     function openMenuLateral() {
@@ -181,14 +288,13 @@
 
         if (menuLateral.style.width === '3rem' || menuLateral.style.width === '') {
             menuLateral.style.width = '10rem';
-            divButton.style.right = '45rem';
             divButton.style.transform = 'rotate(180deg)';
             ulList.style.display = 'flex';
             logo.style.display = 'block';
         } else {
             menuLateral.style.width = '3rem';
             ulList.style.display = 'none';
-            divButton.style.right = '48.5rem';
+            divButton.style.right = '1rem';
             divButton.style.transform = 'rotate(360deg)';
             logo.style.display = 'none';
         }
