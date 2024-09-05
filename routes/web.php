@@ -39,6 +39,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
     Route::patch('/passagens/salvar', [PassagemController::class, 'salvarPassagem'])->name('passagens.salvar');
     Route::get('/home', [PassagemController::class, 'index'])->name('home');
+    Route::get('/administrador', [AuthAdminController::class, 'index'])->name('administrador');
     Route::get('/vender-passagem', [PassagemController::class, 'index_vender'])->name('vender-passagem');
     Route::delete('/delete-passagem/{id}', [PassagemController::class, 'destroy'])->name('delete-passagem');
 
@@ -53,6 +54,9 @@ Route::middleware('auth')->group(function () {
     Route::post('passagens/adicionar', [PassagemController::class, 'adicionar'])->name('passagens.adicionar');
 
     Route::post('/vender-passagem', [PassagemController::class, 'store'])->name('passagens.store');
+
+    Route::get('/passagens', [PassagemController::class, 'index'])->name('passagens.index');
+
 
 
 

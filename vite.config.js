@@ -8,4 +8,7 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    define: {
+        'process.env.PUBLIC_KEY_MP': `"${process.env.VITE_PUBLIC_KEY_MP}"`,
+    },
 });

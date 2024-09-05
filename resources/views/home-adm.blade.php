@@ -133,6 +133,7 @@
             border-bottom: 1px solid #d4d4d4;
             gap: 1rem;
             color: #2C3E50;
+            height: 50px;
         }
 
         .linha-dados button {
@@ -164,6 +165,48 @@
             border: none;
             border-radius: 7px;
             cursor: pointer;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            font-family: "Poppins", sans-serif;
+            color: #fff;
+        }
+
+        .pagination a {
+            padding: 10px 15px;
+            margin: 0 5px;
+            background-color: #2C3E50;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .pagination a:hover {
+            background-color: #1bd1b5;
+        }
+
+        .pagination .disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            padding: 10px 15px;
+            margin: 0 5px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .pagination .current {
+            background-color: #1bd1b5;
+            padding: 10px 15px;
+            margin: 0 5px;
+            color: #fff;
+            border-radius: 5px;
+            cursor: default;
         }
     </style>
 </head>
@@ -256,6 +299,10 @@
                             </button>
                         </div>
                     @endforeach
+                </div>
+
+                <div class="pagination">
+                    {{ $passagens->links() }}
                 </div>
             </div>
         </div>

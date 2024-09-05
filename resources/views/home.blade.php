@@ -705,12 +705,33 @@
         <p></p>
     </div>
 
+    <div id="wallet_container"></div>
+
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+
+<script>
+    const mpPublicKey = "{{ env('PUBLIC_KEY_MP') }}";
+    const mp = new MercadoPago(mpPublicKey);
+    const bricksBuilder = mp.bricks();
+    console.log(mp, 'mpmpmpmpmpmpmp');
+
+    mp.bricks().create("wallet", "wallet_container", {
+        initialization: {
+            preferenceId: "<PREFERENCE_ID>",
+        },
+        customization: {
+            texts: {
+                valueProp: 'smart_option',
+            },
+        },
+    });
+</script>
 
 <script>
     function ShowModalRegister() {
