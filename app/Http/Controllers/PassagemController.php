@@ -193,4 +193,14 @@ class PassagemController extends Controller
             'passagem' => $passagem
         ]);
     }
+
+    public function goToCart(Request $request) {
+        $passagemId = $request->query('id');
+
+        $passagem = Passagem::find($passagemId);
+
+        return view('buy-ticket', [
+            'passagem' => $passagem
+        ])->with('success', 'Passagem adicionada com sucesso!');
+    }
 }

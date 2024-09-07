@@ -56,10 +56,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/vender-passagem', [PassagemController::class, 'store'])->name('passagens.store');
 
     Route::get('/passagens', [PassagemController::class, 'index'])->name('passagens.index');
+    Route::get('/buy-ticket', [PassagemController::class, 'goToCart'])->name('buy-ticket');
 
 
-
-
+    // Route::get('buy-ticket', function() {
+    //     return view('buy-ticket');
+    // })->name('buy-ticket');
 
     Route::get('home-adm', function() {
         return view('home-adm');
