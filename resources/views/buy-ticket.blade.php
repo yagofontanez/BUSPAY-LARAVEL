@@ -273,10 +273,31 @@
             border-radius: 7px;
             color: #2C3E50;
             padding: 10px;
+            font-size: 18px;
+            font-weight: 600;
         }
 
         #wallet_container {
             display: none;
+        }
+
+        #btn-normal-pay {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 10px;
+            background: #2C3E50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            width: 280px;
+            height: 48px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #btn-normal-pay:hover {
+            background: #1A344E;
         }
     </style>
 
@@ -351,6 +372,8 @@
                         <option value="mercado-pago">Mercado Pago</option>
                     </select>
                     <div id="wallet_container"></div>
+                    <button id="btn-normal-pay">Comprar</button>
+                    <button class="button-payment-normal"></button>
                 </div>
             </div>
         </div>
@@ -375,11 +398,17 @@
 <script>
     const selectPayment = document.getElementById('forma-pagamento');
     const btnMercadoPago = document.getElementById('wallet_container');
+    const btnNormalPayment = document.getElementById('btn-normal-pay');
     selectPayment.addEventListener('change', function() {
         if (selectPayment.value === 'mercado-pago') {
             btnMercadoPago.style.display = 'flex';
+            btnNormalPayment.style.display = 'none';
+        } else if (selectPayment.value === 'empty') {
+            btnMercadoPago.style.display = 'none';
+            btnNormalPayment.style.display = 'none';
         } else {
             btnMercadoPago.style.display = 'none';
+            btnNormalPayment.style.display = 'flex';
         }
     })
 </script>
