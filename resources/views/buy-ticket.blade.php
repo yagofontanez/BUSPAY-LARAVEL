@@ -372,6 +372,25 @@
                         <option value="mercado-pago">Mercado Pago</option>
                     </select>
                     <div id="wallet_container"></div>
+                    <form id="paymentForm">
+                        <input type="text" name="cardNumber" id="form-checkout__cardNumber"
+                            placeholder="Número do Cartão">
+                        <input type="text" name="cardExpirationMonth" id="form-checkout__cardExpirationMonth"
+                            placeholder="MM">
+                        <input type="text" name="cardExpirationYear" id="form-checkout__cardExpirationYear"
+                            placeholder="AA">
+                        <input type="text" name="cardholderName" id="form-checkout__cardholderName"
+                            placeholder="Nome do Titular">
+                        <input type="text" name="securityCode" id="form-checkout__securityCode"
+                            placeholder="Código de Segurança">
+                        <input type="email" name="cardholderEmail" id="form-checkout__cardholderEmail"
+                            placeholder="E-mail">
+                        <input type="text" name="installments" id="form-checkout__installments"
+                            placeholder="Parcelas">
+                        <input type="hidden" id="form-checkout__identificationType" value="CPF">
+
+                        <button type="submit" id="form-checkout__submit">Pagar</button>
+                    </form>
                     <button id="btn-normal-pay">Comprar</button>
                     <button class="button-payment-normal"></button>
                 </div>
@@ -394,6 +413,88 @@
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
+
+<script>
+    const mpPublicKey = "{{ env('PUBLIC_KEY_MP') }}";
+    const mp = new MercadoPago(mpPublicKey);
+
+    const cardForm = mp.cardForm({
+        amount: '100.00',
+        autoMount: true,
+        form: {
+            id: 'paymentForm',
+            cardholderName: {
+                id: 'form-checkout__cardholderName',
+                placeholder: 'Nome do Titular',
+            },
+            cardNumber: {
+                id: 'form-checkout__cardNumber',
+                placeholder: 'Número do Cartão',
+            },
+            expirationMonth: {
+                id: 'form-checkout__cardExpirationMonth',
+                placeholder: 'MM',
+            },
+            expirationYear: {
+                id: 'form-checkout__cardExpirationYear',
+                placeholder: 'AA',
+            },
+            securityCode: {
+                id: 'form-checkout__securityCode',
+                placeholder: 'Código de Segurança',
+            },
+            installments: {
+                id: 'form-checkout__installments',
+                placeholder: 'Parcelas',
+            },
+            cardholderEmail: {
+                id: 'form-checkout__cardholderEmail',
+                placeholder: 'E-mail',
+            },
+        },
+        callbacks: {
+            onFormMounted: function(error) {
+                if (error) return console.warn('Form mounted handling error: ', error);
+                console.log('Form mounted');
+            },
+            onSubmit: function(event) {
+                event.preventDefault();
+
+                const {
+                    paymentMethodId,
+                    issuerId,
+                    cardholderEmail,
+                    token,
+                    installments,
+                } = cardForm.getCardFormData();
+
+                axios.post('/pagamento', {
+                        token: token,
+                        payment_method_id: paymentMethodId,
+                        email: cardholderEmail,
+                        installments: installments,
+                        amount: '100.00'
+                    })
+                    .then(response => {
+                        console.log('Pagamento realizado com sucesso', response.data);
+                    })
+                    .catch(error => {
+                        console.error('Erro ao realizar o pagamento', error);
+                    });
+            },
+            onFetching: (resource) => {
+                console.log('Fetching resource: ', resource);
+
+                const payButton = document.getElementById('form-checkout__submit');
+                payButton.setAttribute('disabled', true);
+
+                return () => {
+                    payButton.removeAttribute('disabled');
+                };
+            },
+        },
+    });
+</script>
 
 <script>
     const selectPayment = document.getElementById('forma-pagamento');
