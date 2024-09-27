@@ -40,7 +40,6 @@
             background-color: #cfcfcf;
             margin: 0;
             padding: 0;
-            overflow: hidden;
         }
 
         #particles-js {
@@ -373,23 +372,15 @@
                     </select>
                     <div id="wallet_container"></div>
                     <form id="paymentForm">
-                        <input type="text" name="cardNumber" id="form-checkout__cardNumber"
-                            placeholder="Número do Cartão">
-                        <input type="text" name="cardExpirationMonth" id="form-checkout__cardExpirationMonth"
-                            placeholder="MM">
-                        <input type="text" name="cardExpirationYear" id="form-checkout__cardExpirationYear"
-                            placeholder="AA">
-                        <input type="text" name="cardholderName" id="form-checkout__cardholderName"
-                            placeholder="Nome do Titular">
-                        <input type="text" name="securityCode" id="form-checkout__securityCode"
-                            placeholder="Código de Segurança">
-                        <input type="email" name="cardholderEmail" id="form-checkout__cardholderEmail"
-                            placeholder="E-mail">
-                        <input type="text" name="installments" id="form-checkout__installments"
-                            placeholder="Parcelas">
-                        <input type="hidden" id="form-checkout__identificationType" value="CPF">
-
-                        <button type="submit" id="form-checkout__submit">Pagar</button>
+                        @csrf
+                        <div id="form-checkout__cardNumber-container"></div>
+                        <div id="form-checkout__expirationDate-container"></div>
+                        <div id="form-checkout__securityCode-container"></div>
+                        <input type="text" id="form-checkout__cardholderName" placeholder="Nome do Titular"
+                            value="APRO">
+                        <input type="email" id="form-checkout__cardholderEmail" placeholder="Email"
+                            value="test@test.com">
+                        <button type="button" id="payButton">Gerar Token e Pagar</button>
                     </form>
                     <button id="btn-normal-pay">Comprar</button>
                     <button class="button-payment-normal"></button>
@@ -398,14 +389,6 @@
         </div>
     </div>
 
-    {{-- <div>
-        <h1>Detalhes da Passagem</h1>
-        <p>Cidade Ida: {{ $passagem->PAS_CIDADEIDA }}</p>
-        <p>Cidade Volta: {{ $passagem->PAS_CIDADEVOLTA }}</p>
-        <p>Preço: R${{ number_format($passagem->PAS_PRECO, 2, ',', '.') }}</p>
-    </div> --}}
-    {{-- <div id="wallet_container"></div> --}}
-
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -413,87 +396,60 @@
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 
 <script>
-    const mpPublicKey = "{{ env('PUBLIC_KEY_MP') }}";
-    const mp = new MercadoPago(mpPublicKey);
-
-    const cardForm = mp.cardForm({
-        amount: '100.00',
-        autoMount: true,
-        form: {
-            id: 'paymentForm',
-            cardholderName: {
-                id: 'form-checkout__cardholderName',
-                placeholder: 'Nome do Titular',
-            },
-            cardNumber: {
-                id: 'form-checkout__cardNumber',
-                placeholder: 'Número do Cartão',
-            },
-            expirationMonth: {
-                id: 'form-checkout__cardExpirationMonth',
-                placeholder: 'MM',
-            },
-            expirationYear: {
-                id: 'form-checkout__cardExpirationYear',
-                placeholder: 'AA',
-            },
-            securityCode: {
-                id: 'form-checkout__securityCode',
-                placeholder: 'Código de Segurança',
-            },
-            installments: {
-                id: 'form-checkout__installments',
-                placeholder: 'Parcelas',
-            },
-            cardholderEmail: {
-                id: 'form-checkout__cardholderEmail',
-                placeholder: 'E-mail',
-            },
-        },
-        callbacks: {
-            onFormMounted: function(error) {
-                if (error) return console.warn('Form mounted handling error: ', error);
-                console.log('Form mounted');
-            },
-            onSubmit: function(event) {
-                event.preventDefault();
-
-                const {
-                    paymentMethodId,
-                    issuerId,
-                    cardholderEmail,
-                    token,
-                    installments,
-                } = cardForm.getCardFormData();
-
-                axios.post('/pagamento', {
-                        token: token,
-                        payment_method_id: paymentMethodId,
-                        email: cardholderEmail,
-                        installments: installments,
-                        amount: '100.00'
-                    })
-                    .then(response => {
-                        console.log('Pagamento realizado com sucesso', response.data);
-                    })
-                    .catch(error => {
-                        console.error('Erro ao realizar o pagamento', error);
-                    });
-            },
-            onFetching: (resource) => {
-                console.log('Fetching resource: ', resource);
-
-                const payButton = document.getElementById('form-checkout__submit');
-                payButton.setAttribute('disabled', true);
-
-                return () => {
-                    payButton.removeAttribute('disabled');
-                };
-            },
-        },
+    const mp = new MercadoPago('APP_USR-c6ee06d2-39f1-4acc-8606-358ba8c617e9', {
+        locale: 'pt-BR'
     });
+
+    const cardNumberField = mp.fields.create('cardNumber', {
+        placeholder: "Número do Cartão"
+    }).mount('form-checkout__cardNumber-container');
+
+    const expirationDateField = mp.fields.create('expirationDate', {
+        placeholder: "MM/AA"
+    }).mount('form-checkout__expirationDate-container');
+
+    const securityCodeField = mp.fields.create('securityCode', {
+        placeholder: "CVV"
+    }).mount('form-checkout__securityCode-container');
+
+    async function processPayment() {
+        try {
+            const cardholderName = document.getElementById('form-checkout__cardholderName').value;
+            const cardholderEmail = document.getElementById('form-checkout__cardholderEmail').value;
+
+            const token = await mp.fields.createCardToken({
+                cardholderName: cardholderName,
+            });
+
+            if (token && token.id) {
+                axios.post('/pagamento', {
+                        token: token.id,
+                        payment_method_id: 'visa',
+                        installments: 1,
+                        amount: '100.00',
+                        email: cardholderEmail
+                    })
+                    .then(function(response) {
+                        console.log('Pagamento realizado com sucesso!', response.data);
+                        alert('Pagamento realizado com sucesso!');
+                    })
+                    .catch(function(error) {
+                        console.error('Erro ao realizar o pagamento', error);
+                        alert('Erro ao realizar o pagamento.');
+                    });
+            } else {
+                console.error("Erro ao gerar o token.");
+            }
+        } catch (error) {
+            console.error("Erro ao processar pagamento:", error);
+        }
+    }
+
+    document.getElementById('payButton').addEventListener('click', processPayment);
 </script>
 
 <script>

@@ -27,7 +27,7 @@ Route::get('/cadastro-admin', function () {
     return view('cadastro-admin');
 })->name('cadastro-admin');
 
-Route::post('/pagamento', [PaymentController::class, 'createPayment']);
+Route::post('/pagamento', [PaymentController::class, 'createPayment'])->name('pagamento');
 Route::get('/cadastro', [RegisterController::class, 'showRegistrationForm'])->name('cadastro');
 Route::post('/cadastro-post', [RegisterController::class, 'cadastro'])->name('cadastro-post');
 Route::post('/cadastro-admin', [AuthAdminController::class, 'cadastro'])->name('cadastro-admin');
