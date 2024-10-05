@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Passagem;
+use Illuminate\Database\Eloquent\Collection;
 
 class AuthAdminController extends Controller
 {
@@ -38,16 +39,15 @@ class AuthAdminController extends Controller
             }
 
             $perPage = 10;
-            $page = $request->input('page', 1);
+            $currentPage = $request->input('page', 1);
             $total = $query->count();
-
-            $passagens = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+            $totalPages = ceil($total / $perPage);
+            $passagens = $query->skip(($currentPage - 1) * $perPage)->take($perPage)->get();
 
             return view('home-adm', [
                 'passagens' => $passagens,
-                'total' => $total,
-                'perPage' => $perPage,
-                'currentPage' => $page,
+                'currentPage' => $currentPage,
+                'totalPages' => $totalPages,
             ])->with('success', 'Login realizado com sucesso!');
         }
 
@@ -103,5 +103,20 @@ class AuthAdminController extends Controller
         return view('home-adm', [
             'passagens' => $passagens,
         ]);
+    }
+
+    public function destroy($id)
+    {
+        $passagem = Passagem::find($id);
+
+        if (!$passagem) {
+            return redirect()->back()->with('error', 'Passagem não encontrada.');
+        }
+
+        $passagem->delete();
+
+        session()->regenerate();
+
+        return redirect()->route('home-adm')->with('success', 'Passagem deletada com sucesso!');
     }
 }

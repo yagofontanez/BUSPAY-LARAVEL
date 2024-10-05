@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Buspay ADM | Home</title>
 
@@ -176,7 +177,8 @@
             color: #fff;
         }
 
-        .pagination a {
+        .pagination a,
+        .pagination .current {
             padding: 10px 15px;
             margin: 0 5px;
             background-color: #2C3E50;
@@ -278,7 +280,7 @@
                             <p>R${{ number_format($passagem->PAS_PRECO, 2, ',', '.') }}</p>
                             <p>{{ \Carbon\Carbon::parse($passagem->PAS_HORASIDA)->setTimezone('America/Sao_Paulo')->format('H:i') }}
                             </p>
-                            <button>
+                            <button onclick="deletePassagem({{ $passagem->id }})">
                                 <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -302,7 +304,40 @@
                 </div>
 
                 <div class="pagination">
-                    {{ $passagens->links() }}
+                    <ul style="display: flex; list-style-type: none;">
+                        @if ($currentPage > 1)
+                            <li>
+                                <a href="{{ url()->current() }}?page={{ $currentPage - 1 }}"
+                                    class="pagination-link">Anterior</a>
+                            </li>
+                        @else
+                            <li>
+                                <span class="disabled">Anterior</span>
+                            </li>
+                        @endif
+
+                        @for ($i = 1; $i <= $totalPages; $i++)
+                            <li>
+                                @if ($i == $currentPage)
+                                    <span class="current-page">{{ $i }}</span>
+                                @else
+                                    <a href="{{ url()->current() }}?page={{ $i }}"
+                                        class="pagination-link">{{ $i }}</a>
+                                @endif
+                            </li>
+                        @endfor
+
+                        @if ($currentPage < $totalPages)
+                            <li>
+                                <a href="{{ url()->current() }}?page={{ $currentPage + 1 }}"
+                                    class="pagination-link">Próximo</a>
+                            </li>
+                        @else
+                            <li>
+                                <span class="disabled">Próximo</span>
+                            </li>
+                        @endif
+                    </ul>
                 </div>
             </div>
         </div>
@@ -314,6 +349,31 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    function deletePassagem(passagemId) {
+        if (!confirm('Tem certeza que deseja deletar essa passagem?')) {
+            return;
+        }
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        axios.delete(`/delete-passagem/${passagemId}`, {
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            })
+            .then(function(response) {
+                alert('Passagem deletada com sucesso!');
+                location.reload();
+            })
+            .catch(function(error) {
+                console.error('Houve um erro ao deletar a passagem:', error);
+                alert('Erro ao deletar a passagem.');
+            });
+    }
+</script>
 
 <script>
     const containerPassagens = document.querySelector('.container-visualizacao-passagens');
