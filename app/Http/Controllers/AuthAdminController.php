@@ -6,11 +6,9 @@ use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Passagem;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\User;
 
 class AuthAdminController extends Controller
 {
@@ -28,30 +26,21 @@ class AuthAdminController extends Controller
             Auth::login($admin);
             $request->session()->regenerate();
 
-            $query = Passagem::query();
+            $queryPassagem = Passagem::query();
+            $queryClientes = User::query()->where('US_TIPOCOMPRADOR', 'Comprador');
+            $queryEmpresas = User::query()->where('US_TIPOCOMPRADOR', 'Vendedor');
 
-            if ($request->has('date_from') && $request->get('date_from')) {
-                $query->where('PAS_DIAIDA', '>=', $request->get('date_from'));
-            }
-
-            if ($request->has('date_to') && $request->get('date_to')) {
-                $query->where('PAS_DIAVOLTA', '<=', $request->get('date_to'));
-            }
-
-            $perPage = 10;
-            $currentPage = $request->input('page', 1);
-            $total = $query->count();
-            $totalPages = ceil($total / $perPage);
-            $passagens = $query->skip(($currentPage - 1) * $perPage)->take($perPage)->get();
+            $passagens = $queryPassagem->get();
+            $clientes = $queryClientes->get();
+            $empresas = $queryEmpresas->get();
 
             return view('home-adm', [
                 'passagens' => $passagens,
-                'currentPage' => $currentPage,
-                'totalPages' => $totalPages,
+                'clientes' => $clientes,
+                'empresas' => $empresas
             ])->with('success', 'Login realizado com sucesso!');
         }
 
-        return back()->with('error', 'Falha ao autenticar administrador');
     }
 
     public function cadastro(Request $request)
@@ -87,6 +76,12 @@ class AuthAdminController extends Controller
 
     public function index(Request $request)
     {
+        if (Auth::check()) {
+            dd('Usuário autenticado:', Auth::user());
+        } else {
+            dd('Usuário não autenticado.');
+        }
+
         $query = Passagem::query();
 
         if ($request->has('date_from') && $request->get('date_from')) {
@@ -110,13 +105,11 @@ class AuthAdminController extends Controller
         $passagem = Passagem::find($id);
 
         if (!$passagem) {
-            return redirect()->back()->with('error', 'Passagem não encontrada.');
+            return response()->json(['error' => 'Passagem não encontrada.'], 404);
         }
 
         $passagem->delete();
 
-        session()->regenerate();
-
-        return redirect()->route('home-adm')->with('success', 'Passagem deletada com sucesso!');
+        return response()->json(['success' => 'Passagem deletada com sucesso!'], 200);
     }
 }

@@ -34,7 +34,7 @@ Route::post('/cadastro-admin', [AuthAdminController::class, 'cadastro'])->name('
 
 Route::post('/login-usuario', [AuthController::class, 'loginUsuario'])->name('login-usuario');
 Route::post('/login-administrador', [AuthAdminController::class, 'loginAdmin'])->name('login-administrador');
-
+Route::delete('/delete-passagem/${id}', [AuthAdminController::class, 'destroy']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
