@@ -56,7 +56,7 @@
             align-items: center;
             justify-content: space-between;
             width: 30vw;
-            height: 40rem;
+            height: 43rem;
             margin: 2rem auto;
             inset: 0;
             border-radius: 40px;
@@ -205,13 +205,9 @@
                 </label>
             </div>
             <div id="div-label" class="documento">
-                <label for="US_DOCUMENTO" class="label-cpf">
-                    CPF
-                    <input maxlength="14" type="text" name="US_DOCUMENTO" placeholder="Documento" id="US_DOCUMENTO" onblur="formatCPF(this)">
-                </label>
-                <label for="US_DOCUMENTO" class="label-cnpj">
-                    CNPJ
-                    <input maxlength="18" type="text" name="US_DOCUMENTO" placeholder="Documento" class="US_DOCUMENTO" onblur="formatCNPJ(this)">
+                <label for="US_DOCUMENTO" id="documento-label">
+                    Documento
+                    <input type="text" name="US_DOCUMENTO" placeholder="CPF ou CNPJ" id="US_DOCUMENTO" onblur="formatDocumento(this)">
                 </label>
             </div>
             <button type="submit" class="btn-cadastrar">Cadastrar</button>
@@ -223,25 +219,38 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const labelCPF = document.querySelector('.label-cpf');
-            const labelCNPJ = document.querySelector('.label-cnpj');
+        document.addEventListener('DOMContentLoaded', function() {
             const tipoComprador = document.getElementById('US_TIPOCOMPRADOR');
-            const labelEmpresa = document.querySelector('.label-empresa');
-            const labelNome = document.querySelector('.label-nome');
+            const documentoInput = document.getElementById('US_DOCUMENTO');
+            const documentoLabel = document.getElementById('documento-label');
 
             function toggleDocumentoFields() {
                 if (tipoComprador.value === '{{ \App\TipoComprador::PESSOA_JURIDICA->value }}') {
-                    labelCNPJ.style.display = 'flex';
-                    labelCPF.style.display = 'none';
-                    labelEmpresa.style.display = 'flex';
-                    labelNome.style.display = 'none';
+                    documentoInput.placeholder = "CNPJ";
+                    documentoInput.maxLength = 18;
                 } else {
-                    labelCNPJ.style.display = 'none';
-                    labelCPF.style.display = 'flex';
-                    labelEmpresa.style.display = 'none';
-                    labelNome.style.display = 'flex';
+                    documentoInput.placeholder = "CPF";
+                    documentoInput.maxLength = 14;
                 }
+            }
+
+            function formatDocumento(input) {
+                let value = input.value.replace(/\D/g, '');
+                if (tipoComprador.value === '{{ \App\TipoComprador::PESSOA_JURIDICA->value }}') {
+                    if (value.length <= 14) {
+                        value = value.replace(/(\d{2})(\d)/, '$1.$2');
+                        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                        value = value.replace(/(\d{3})(\d)/, '$1/$2');
+                        value = value.replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+                    }
+                } else {
+                    if (value.length <= 11) {
+                        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                        value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    }
+                }
+                input.value = value;
             }
 
             tipoComprador.addEventListener('change', toggleDocumentoFields);

@@ -514,14 +514,6 @@
                 </li>
             </ul>
             <div class="profile-session">
-                <a href="#">
-                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z"
-                            stroke="#2C3E50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </a>
 
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
@@ -563,54 +555,6 @@
     </div>
 
     <div class="segunda-dobra" id="passagens-lista">
-        <div class="filtros-passagens">
-            <div class="separator-div">
-                <p>BUSCAR PASSAGEM</p>
-                <input type="text" name="" placeholder="Digite a Cidade" id="">
-                <button title="filter" class="filter" onclick="handleOpenModalFiltros()">
-                    <svg viewBox="0 0 512 512" height="1em">
-                        <path
-                            d="M0 416c0 17.7 14.3 32 32 32l54.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 448c17.7 0 32-14.3 32-32s-14.3-32-32-32l-246.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 384c-17.7 0-32 14.3-32 32zm128 0a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM320 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm32-80c-32.8 0-61 19.7-73.3 48L32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l246.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48l54.7 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-54.7 0c-12.3-28.3-40.5-48-73.3-48zM192 128a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm73.3-64C253 35.7 224.8 16 192 16s-61 19.7-73.3 48L32 64C14.3 64 0 78.3 0 96s14.3 32 32 32l86.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 128c17.7 0 32-14.3 32-32s-14.3-32-32-32L265.3 64z">
-                        </path>
-                    </svg>
-                </button>
-            </div>
-            <form action="{{ route('passagens.index') }}" method="GET">
-                <div class="container-datas">
-                    <p>DE: </p>
-                    <input type="date" name="date_from" id="date_from">
-                    <p>A: </p>
-                    <input type="date" name="date_to" id="date_to">
-                    <button type="submit">
-                        <svg height="20px" width="20px" version="1.1" id="_x32_"
-                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                            viewBox="0 0 512 512" xml:space="preserve">
-                            <style type="text/css">
-                                .st0 {
-                                    fill: #fff;
-                                }
-                            </style>
-                            <g>
-                                <path class="st0" d="M172.625,102.4c-42.674,0-77.392,34.739-77.392,77.438c0,5.932,4.806,10.74,10.733,10.74
-  c5.928,0,10.733-4.808,10.733-10.74c0-30.856,25.088-55.959,55.926-55.959c5.928,0,10.733-4.808,10.733-10.74
-  C183.358,107.208,178.553,102.4,172.625,102.4z" />
-                                <path class="st0"
-                                    d="M361.657,301.511c19.402-30.436,30.645-66.546,30.645-105.244C392.302,88.036,304.318,0,196.151,0
-  c-38.676,0-74.765,11.25-105.182,30.663C66.734,46.123,46.11,66.759,30.659,91.008C11.257,121.444,0,157.568,0,196.267
-  c0,108.217,87.998,196.266,196.151,196.266c38.676,0,74.779-11.264,105.197-30.677C325.582,346.396,346.206,325.76,361.657,301.511
-  z M259.758,320.242c-19.075,9.842-40.708,15.403-63.607,15.403c-76.797,0-139.296-62.535-139.296-139.378
-  c0-22.912,5.558-44.558,15.394-63.644c13.318-25.856,34.483-47.019,60.323-60.331c19.075-9.842,40.694-15.403,63.578-15.403
-  c76.812,0,139.296,62.521,139.296,139.378c0,22.898-5.558,44.53-15.394,63.616C306.749,285.739,285.598,306.916,259.758,320.242z" />
-                                <path class="st0"
-                                    d="M499.516,439.154L386.275,326.13c-16.119,23.552-36.771,44.202-60.309,60.345l113.241,113.024
-  c8.329,8.334,19.246,12.501,30.148,12.501c10.916,0,21.833-4.167,30.162-12.501C516.161,482.83,516.161,455.822,499.516,439.154z" />
-                            </g>
-                        </svg>
-                    </button>
-                </div>
-            </form>
-
-        </div>
         <div class="dados-passagens">
             @foreach ($passagens as $passagem)
                 <div class="linha-dados">
@@ -620,13 +564,6 @@
                     <p>R${{ number_format($passagem->PAS_PRECO, 2, ',', '.') }}</p>
                     <p>{{ \Carbon\Carbon::parse($passagem->PAS_HORASIDA)->setTimezone('America/Sao_Paulo')->format('H:i') }}
                     </p>
-                    <button class="salvar-passagem" data-id="{{ $passagem->id }}">
-                        <svg fill="#fff" width="20px" height="20px" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M20.808,11.079C19.829,16.132,12,20.5,12,20.5s-7.829-4.368-8.808-9.421C2.227,6.1,5.066,3.5,8,3.5a4.444,4.444,0,0,1,4,2,4.444,4.444,0,0,1,4-2C18.934,3.5,21.773,6.1,20.808,11.079Z" />
-                        </svg>
-                    </button>
                     <a href="{{ route('buy-ticket', ['id' => $passagem->id]) }}">
                         <button>
                             <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
@@ -715,24 +652,6 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 
-
-<script>
-    const mpPublicKey = "{{ env('PUBLIC_KEY_MP') }}";
-    const mp = new MercadoPago(mpPublicKey);
-    const bricksBuilder = mp.bricks();
-    console.log(mp, 'mpmpmpmpmpmpmp');
-
-    mp.bricks().create("wallet", "wallet_container", {
-        initialization: {
-            preferenceId: "<PREFERENCE_ID>",
-        },
-        customization: {
-            texts: {
-                valueProp: 'smart_option',
-            },
-        },
-    });
-</script>
 
 <script>
     function ShowModalRegister() {

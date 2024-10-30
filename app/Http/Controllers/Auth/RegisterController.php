@@ -18,9 +18,10 @@ class RegisterController extends Controller
 
     public function cadastro(Request $request)
     {
-        $this->validator($request->all())->validate();
+        $data = $request->all();
+        $data['US_SENHA'] = Hash::make($data['US_SENHA']);
 
-        $user = $this->create($request->all());
+        User::create($data);
 
         return redirect()->route('login')->with('success', 'Cadastro realizado com sucesso!');
     }

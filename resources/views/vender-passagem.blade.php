@@ -274,7 +274,7 @@
 
         .linha-dados {
             display: grid;
-            grid-template-columns: 17fr 8fr 9fr 1fr 1fr;
+            grid-template-columns: 17fr 8fr 9fr 1fr 1fr 1fr;
             align-items: center;
             padding: 10px;
             margin: 10px 0;
@@ -353,6 +353,13 @@
             background-color: rgba(0, 0, 0, 0.8);
             z-index: 10;
         }
+
+        #qrcode-container svg {
+            position: fixed;
+            z-index: 10;
+            top: 0;
+            width: 400px;
+        }
     </style>
 
 </head>
@@ -371,14 +378,6 @@
                 <li><a href="{{ route('vender-passagem') }}">Vender</a></li>
             </ul>
             <div class="profile-session">
-                <a href="#">
-                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z"
-                            stroke="#2C3E50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </a>
 
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
@@ -406,6 +405,8 @@
                 <span class="text-slide">Simples!</span>
             </div>
         </h1>
+        <button onclick="teste()">Gerar QRCODE</button>
+        <div id="qrcode-container"></div>
         <button onclick="showModalSell()">Vender</button>
     </div>
 
@@ -440,16 +441,46 @@
                             fill="#fff" />
                     </svg>
                 </button>
-                <button>
-                    {{-- <a href="{{ route('delete-passagem') }}"> --}}
-                    <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6"
-                            stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                    {{-- </a> --}}
-                </button>
+                <div>
+                    <form action="{{ route('passagens.destroy', $passagem->id) }}" method="POST"
+                        onsubmit="return confirm('Deseja realmente deletar?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit">
+                            <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6"
+                                    stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                <div>
+                    <button
+                        onclick="openEditModal({
+                            id: '{{ $passagem->id }}',
+                            estadoIda: '{{ $passagem->PAS_ESTADOIDA }}',
+                            cidadeIda: '{{ $passagem->PAS_CIDADEIDA }}',
+                            estadoVolta: '{{ $passagem->PAS_ESTADOVOLTA }}',
+                            cidadeVolta: '{{ $passagem->PAS_CIDADEVOLTA }}',
+                            horarioIda: '{{ $passagem->PAS_HORASIDA }}',
+                            horarioVolta: '{{ $passagem->PAS_HORASVOLTA }}',
+                            diaIda: '{{ $passagem->PAS_DIAIDA }}',
+                            diaVolta: '{{ $passagem->PAS_DIAVOLTA }}',
+                            preco: '{{ number_format($passagem->PAS_PRECO, 2, ',', '.') }}'
+                        })">
+                        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z"
+                                stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <path
+                                d="M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13"
+                                stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         @endforeach
     </div>
@@ -572,6 +603,65 @@
         <span></span>
     </div>
 
+    <div class="modal-edit" style="display: none;">
+        <h1>Editar Passagem</h1>
+        <form id="edit-form" method="POST">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="id" id="edit-id">
+            <div class="form-grid">
+                <div class="grid-item">
+                    <label for="edit-estado-ida">Estado Ida:</label>
+                    <select name="PAS_ESTADOIDA" id="edit-estado-ida">
+                        <option value="">Selecione um Estado</option>
+                    </select>
+                </div>
+                <div class="grid-item">
+                    <label for="edit-cidade-ida">Cidade Ida:</label>
+                    <select name="PAS_CIDADEIDA" id="edit-cidade-ida">
+                        <option value="">Selecione uma Cidade</option>
+                    </select>
+                </div>
+                <div class="grid-item">
+                    <label for="edit-estado-volta">Estado Volta:</label>
+                    <select name="PAS_ESTADOVOLTA" id="edit-estado-volta">
+                        <option value="">Selecione um Estado</option>
+                    </select>
+                </div>
+                <div class="grid-item">
+                    <label for="edit-cidade-volta">Cidade Volta:</label>
+                    <select name="PAS_CIDADEVOLTA" id="edit-cidade-volta">
+                        <option value="">Selecione uma Cidade</option>
+                    </select>
+                </div>
+                <div class="grid-item">
+                    <label for="edit-horario-ida">Horário Ida:</label>
+                    <input type="text" name="PAS_HORASIDA" id="edit-horario-ida">
+                </div>
+                <div class="grid-item">
+                    <label for="edit-horario-volta">Horário Volta:</label>
+                    <input type="text" name="PAS_HORASVOLTA" id="edit-horario-volta">
+                </div>
+                <div class="grid-item">
+                    <label for="edit-dia-ida">Dia Ida:</label>
+                    <input type="date" name="PAS_DIAIDA" id="edit-dia-ida">
+                </div>
+                <div class="grid-item">
+                    <label for="edit-dia-volta">Dia Volta:</label>
+                    <input type="date" name="PAS_DIAVOLTA" id="edit-dia-volta">
+                </div>
+                <div class="grid-item">
+                    <label for="edit-preco">Preço:</label>
+                    <input type="text" name="PAS_PRECO" id="edit-preco">
+                </div>
+            </div>
+            <button type="submit">Salvar Alterações</button>
+            <button type="button" onclick="closeEditModal()">Cancelar</button>
+        </form>
+    </div>
+
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -579,6 +669,99 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script type="text/javascript">
+        const teste = async () => {
+            try {
+                const response = await axios.post('/generate-qr-code', {}, {
+                    responseType: 'text'
+                });
+
+                document.getElementById('qrcode-container').innerHTML = response.data;
+            } catch (error) {
+                console.error('Erro ao gerar QR Code:', error);
+            }
+        }
+    </script>
+    <script>
+        function openEditModal(passagem) {
+            document.getElementById('edit-id').value = passagem.id;
+            document.getElementById('edit-estado-ida').value = passagem.estadoIda;
+            document.getElementById('edit-cidade-ida').value = passagem.cidadeIda;
+            document.getElementById('edit-estado-volta').value = passagem.estadoVolta || '';
+            document.getElementById('edit-cidade-volta').value = passagem.cidadeVolta || '';
+            document.getElementById('edit-horario-ida').value = passagem.horarioIda;
+            document.getElementById('edit-horario-volta').value = passagem.horarioVolta || '';
+            document.getElementById('edit-dia-ida').value = passagem.diaIda;
+            document.getElementById('edit-dia-volta').value = passagem.diaVolta || '';
+            document.getElementById('edit-preco').value = passagem.preco;
+
+            document.querySelector('.modal-edit').style.display = 'flex';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closeEditModal() {
+            document.querySelector('.modal-edit').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
+
+    <script>
+        document.getElementById('edit-form').onsubmit = function(event) {
+            event.preventDefault();
+
+            const id = document.getElementById('edit-id').value;
+            const formData = new FormData(this);
+
+            axios.post(`/passagens/${id}`, formData, {
+                    headers: {
+                        'X-HTTP-Method-Override': 'PUT'
+                    }
+                })
+                .then(response => {
+                    Toastify({
+                        text: "Passagem atualizada com sucesso!",
+                        className: "info",
+                        style: {
+                            background: "#96c93d",
+                        }
+                    }).showToast();
+                    window.location.reload();
+                })
+                .catch(error => {
+                    Toastify({
+                        text: "Erro ao atualizar a passagem.",
+                        className: "error",
+                        style: {
+                            background: "rgba(255, 0, 0, 0.5)",
+                        }
+                    }).showToast();
+                });
+        };
+    </script>
+
+    <script>
+        function openEditModal(passagem) {
+            document.getElementById('edit-id').value = passagem.id;
+            document.getElementById('edit-estado-ida').value = passagem.estadoIda;
+            document.getElementById('edit-cidade-ida').value = passagem.cidadeIda;
+            document.getElementById('edit-estado-volta').value = passagem.estadoVolta;
+            document.getElementById('edit-cidade-volta').value = passagem.cidadeVolta;
+            document.getElementById('edit-horario-ida').value = passagem.horarioIda;
+            document.getElementById('edit-horario-volta').value = passagem.horarioVolta;
+            document.getElementById('edit-dia-ida').value = passagem.diaIda;
+            document.getElementById('edit-dia-volta').value = passagem.diaVolta;
+            document.getElementById('edit-preco').value = passagem.preco;
+
+            document.querySelector('.modal-edit').style.display = 'flex';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closeEditModal() {
+            document.querySelector('.modal-edit').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
 
     <script>
         const showModalPassagem = (passagem) => {

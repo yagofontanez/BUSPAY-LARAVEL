@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Buspay | Comprar</title>
 
@@ -280,7 +281,9 @@
             display: none;
         }
 
-        #btn-normal-pay {
+        #btn-normal-pay,
+        #btn-mercado-pago,
+        #button-payment-normal {
             display: none;
             align-items: center;
             justify-content: center;
@@ -295,8 +298,59 @@
             transition: all 0.3s ease-in-out;
         }
 
-        #btn-normal-pay:hover {
+        #btn-normal-pay:hover,
+        #btn-mercado-pago:hover,
+        #button-payment-normal:hover {
             background: #1A344E;
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            height: 100vh;
+            width: 100vw;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 10;
+        }
+
+        .modal-qrcode {
+            display: none;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30rem;
+            height: 30rem;
+            background-color: #fff;
+            z-index: 11;
+            border-radius: 15px;
+            border: 3px solid #2C3E50;
+            padding: 20px;
+        }
+
+        .btnvoltarmodal {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 17px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            color: #112233;
+            position: relative;
+            right: 200px;
+            bottom: 0px;
+            background: white;
+            font-weight: 700;
+            font-size: 30px;
+        }
+
+        .valuePayment {
+            display: none;
         }
     </style>
 
@@ -305,6 +359,7 @@
 <body>
 
     <div id="particles-js"></div>
+    <div id="overlay"></div>
 
     <div class="container-geral">
         <div class="lado-esquerdo">
@@ -335,7 +390,10 @@
             </div>
             <div class="btns">
                 <button class="btn-prosseguir" onclick="showPayment()">Prosseguir com a Compra</button>
-                <button class="btn-cancelar">Cancelar Compra</button>
+                <form action="{{ route('home') }}" method="head">
+                    @csrf
+                    <button class="btn-cancelar" type="submit">Cancelar Compra</button>
+                </form>
             </div>
             <span class="aviso">Antes de finalizar sua compra, fique atento! Cancelamentos de passagens só poderão ser
                 feitos até 24
@@ -364,26 +422,18 @@
                     <h2>Escolha a Forma de Pagamento</h2>
                     <select id="forma-pagamento" name="forma-pagamento">
                         <option value="empty"></option>
-                        <option value="pix">Pix</option>
                         <option value="dinheiro">Dinheiro</option>
-                        <option value="cartao-debito">Cartão de Débito</option>
-                        <option value="cartao-credito">Cartão de Crédito</option>
                         <option value="mercado-pago">Mercado Pago</option>
                     </select>
-                    <div id="wallet_container"></div>
-                    <form id="paymentForm">
+                    <form action="{{ route('mercadopago.create') }}" method="post" id="paymentForm"
+                        style="display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 25px">
                         @csrf
-                        <div id="form-checkout__cardNumber-container"></div>
-                        <div id="form-checkout__expirationDate-container"></div>
-                        <div id="form-checkout__securityCode-container"></div>
-                        <input type="text" id="form-checkout__cardholderName" placeholder="Nome do Titular"
-                            value="APRO">
-                        <input type="email" id="form-checkout__cardholderEmail" placeholder="Email"
-                            value="test@test.com">
-                        <button type="button" id="payButton">Gerar Token e Pagar</button>
+                        <input type="hidden" name="PAS_PRECO" value="{{ $passagem->PAS_PRECO }}" id="PAS_PRECO">
+                        <input type="hidden" name="id" value="{{ $passagem->id }}" id="id">
+                        <h2 class="valuePayment">R${{ number_format($passagem->PAS_PRECO, 2, ',', '.') }}</h2>
+                        <button id="btn-mercado-pago" type="submit">Comprar com Mercado Pago</button>
+                        <button id="button-payment-normal">Comprar com Dinheiro</button>
                     </form>
-                    <button id="btn-normal-pay">Comprar</button>
-                    <button class="button-payment-normal"></button>
                 </div>
             </div>
         </div>
@@ -397,75 +447,62 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    const mp = new MercadoPago('APP_USR-c6ee06d2-39f1-4acc-8606-358ba8c617e9', {
-        locale: 'pt-BR'
+    document.getElementById('paymentForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(this);
+
+        fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                        'content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                window.location.href = data.init_point;
+                if (data.init_point) {
+                    window.location.href = data.init_point;
+                } else {
+                    alert(data.error || 'Erro ao processar o pagamento.');
+                }
+            })
+            .catch(error => console.error('Erro:', error));
     });
-
-    const cardNumberField = mp.fields.create('cardNumber', {
-        placeholder: "Número do Cartão"
-    }).mount('form-checkout__cardNumber-container');
-
-    const expirationDateField = mp.fields.create('expirationDate', {
-        placeholder: "MM/AA"
-    }).mount('form-checkout__expirationDate-container');
-
-    const securityCodeField = mp.fields.create('securityCode', {
-        placeholder: "CVV"
-    }).mount('form-checkout__securityCode-container');
-
-    async function processPayment() {
-        try {
-            const cardholderName = document.getElementById('form-checkout__cardholderName').value;
-            const cardholderEmail = document.getElementById('form-checkout__cardholderEmail').value;
-
-            const token = await mp.fields.createCardToken({
-                cardholderName: cardholderName,
-            });
-
-            if (token && token.id) {
-                axios.post('/pagamento', {
-                        token: token.id,
-                        payment_method_id: 'visa',
-                        installments: 1,
-                        amount: '100.00',
-                        email: cardholderEmail
-                    })
-                    .then(function(response) {
-                        console.log('Pagamento realizado com sucesso!', response.data);
-                        alert('Pagamento realizado com sucesso!');
-                    })
-                    .catch(function(error) {
-                        console.error('Erro ao realizar o pagamento', error);
-                        alert('Erro ao realizar o pagamento.');
-                    });
-            } else {
-                console.error("Erro ao gerar o token.");
-            }
-        } catch (error) {
-            console.error("Erro ao processar pagamento:", error);
-        }
-    }
-
-    document.getElementById('payButton').addEventListener('click', processPayment);
 </script>
 
 <script>
     const selectPayment = document.getElementById('forma-pagamento');
-    const btnMercadoPago = document.getElementById('wallet_container');
-    const btnNormalPayment = document.getElementById('btn-normal-pay');
+    const btnMercadoPago = document.getElementById('btn-mercado-pago');
+    const btnPixPayment = document.getElementById('btn-normal-pay');
+    const btnMoneyPayment = document.getElementById('button-payment-normal');
+    const valuePayment = document.querySelector('.valuePayment');
     selectPayment.addEventListener('change', function() {
         if (selectPayment.value === 'mercado-pago') {
             btnMercadoPago.style.display = 'flex';
-            btnNormalPayment.style.display = 'none';
+            valuePayment.style.display = 'flex';
+            btnPixPayment.style.display = 'none';
+            btnMoneyPayment.style.display = 'none';
         } else if (selectPayment.value === 'empty') {
             btnMercadoPago.style.display = 'none';
-            btnNormalPayment.style.display = 'none';
-        } else {
+            btnPixPayment.style.display = 'none';
+            valuePayment.style.display = 'none';
+            btnMoneyPayment.style.display = 'none';
+        } else if (selectPayment.value === 'pix') {
+            btnPixPayment.style.display = 'flex';
+            valuePayment.style.display = 'flex';
             btnMercadoPago.style.display = 'none';
-            btnNormalPayment.style.display = 'flex';
+            btnMoneyPayment.style.display = 'none';
+        } else if (selectPayment.value === 'dinheiro') {
+            btnMoneyPayment.style.display = 'flex';
+            valuePayment.style.display = 'flex';
+            btnPixPayment.style.display = 'none';
+            btnMercadoPago.style.display = 'none';
         }
     })
 </script>
@@ -475,7 +512,6 @@
         const loadingAguardando = document.querySelector('.card');
         const ladoDireitoContainer = document.querySelector('.lado-direito');
         const modalPayment = document.getElementById('modal-payment');
-        console.log('ta caindo aqui')
 
         if (loadingAguardando.style.display !== 'none') {
             modalPayment.style.display = 'flex';
@@ -591,24 +627,6 @@
             }
         },
         "retina_detect": true
-    });
-</script>
-
-<script>
-    const mpPublicKey = "{{ env('PUBLIC_KEY_MP') }}";
-    const mp = new MercadoPago(mpPublicKey);
-    const bricksBuilder = mp.bricks();
-    console.log(mp, 'mpmpmpmpmpmpmp');
-
-    mp.bricks().create("wallet", "wallet_container", {
-        initialization: {
-            preferenceId: "<PREFERENCE_ID>",
-        },
-        customization: {
-            texts: {
-                valueProp: 'smart_option',
-            },
-        },
     });
 </script>
 

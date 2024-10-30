@@ -3,46 +3,92 @@
 
 namespace App\Http\Controllers;
 
-use MercadoPago\Exceptions\MPApiException;
+use MercadoPago\Client\Preference\PreferenceClient;
 use MercadoPago\MercadoPagoConfig;
-use MercadoPago\Client\Common\RequestOptions;
 use Illuminate\Http\Request;
-use MercadoPago\Client\Payment\PaymentClient;
+use Illuminate\Support\Facades\Http;
 
 class PaymentController extends Controller
 {
-    public function createPayment(Request $request)
+    protected function authenticate()
     {
-        MercadoPagoConfig::setAccessToken(env('ACCESS_TOKEN_MP'));
+        $mpAccessToken = env('ACCESS_TOKEN_MP');
 
-        $client = new PaymentClient();
+        MercadoPagoConfig::setAccessToken(env('ACCESS_TOKEN_MP'));
+    }
+
+    public function createPaymentPreference(Request $request)
+    {
+        $this->authenticate();
+
+        $product = [
+            'id' => (string) $request->id,
+            'title' => "Passagem " . $request->id,
+            'description' => "Descrição da passagem " . $request->id,
+            'currency_id' => "BRL",
+            'quantity' => 1,
+            'unit_price' => (float) $request->PAS_PRECO
+        ];
+
+        $items = [$product];
+
+        $payer = [
+            'name' => 'Yago',
+            'surname' => 'Fontanez',
+            'email' => 'yagofontanez20@icloud.com'
+        ];
+
+        $requestData = $this->createPreferenceRequest($items, $payer);
+
+        $client = new PreferenceClient();
 
         try {
-            $request = [
-                "transaction_amount" => 100,
-                "token" => "YOUR_CARD_TOKEN",
-                "description" => "description",
-                "installments" => 1,
-                "payment_method_id" => "visa",
-                "payer" => [
-                    "email" => "user@test.com",
-                ]
-            ];
+            $preference = $client->create($requestData);
+            return response()->json(['init_point' => $preference->init_point]);
 
-            $request_options = new RequestOptions();
-            $request_options->setCustomHeaders(["X-Idempotency-Key: <SOME_UNIQUE_VALUE>"]);
-
-            $payment = $client->create($request, $request_options);
-            echo $payment->id;
-
-
-        } catch (MPApiException $e) {
-            echo "Status code: " . $e->getApiResponse()->getStatusCode() . "\n";
-            echo "Content: ";
-            var_dump($e->getApiResponse()->getContent());
-            echo "\n";
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    private function createPreferenceRequest($items, $payer)
+    {
+        $paymentMethods = [
+            "excluded_payment_methods" => [],
+            "installments" => 12,
+            "default_installments" => 1
+        ];
+
+        $backurls = [
+            'success' => route('home'),
+            'failure' => route('login')
+        ];
+
+        return [
+            'items' => $items,
+            'payer' => $payer,
+            'paymentMethods' => $paymentMethods,
+            'back_urls' => $backurls,
+            'statement_descriptor' => 'BUSPAY',
+            'external_reference' => '1234567890',
+            'expires' => false,
+            'auto_return' => 'approved',
+        ];
+    }
+
+    public function getPreferenceById($preferenceId)
+    {
+        $this->authenticate();
+
+        $client = new PreferenceClient();
+
+        try {
+            $preference = $client->get($preferenceId);
+
+            return response()->json($preference);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

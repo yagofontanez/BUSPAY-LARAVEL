@@ -116,22 +116,30 @@ class PassagemController extends Controller
         // return view('vender-passagem')->with('success', 'Passagem adicionada com sucesso!');
     }
 
+    // public function update(Request $request, Passagem $passagem)
+    // {
+    //     $passagem->update($request->all());
+    //     return redirect()->route('passagens.index')->with('success', 'Passagem atualizada com sucesso!');
+    // }
 
-
-    public function show(Passagem $passagem)
+    public function update(Request $request, $id)
     {
-        return view('passagens.show', compact('passagem'));
-    }
+        $request->validate([
+            'PAS_ESTADOIDA' => 'required|string',
+            'PAS_CIDADEIDA' => 'required|string',
+            'PAS_ESTADOVOLTA' => 'nullable|string',
+            'PAS_CIDADEVOLTA' => 'nullable|string',
+            'PAS_HORASIDA' => 'required|string',
+            'PAS_HORASVOLTA' => 'nullable|string',
+            'PAS_DIAIDA' => 'required|date',
+            'PAS_DIAVOLTA' => 'nullable|date',
+            'PAS_PRECO' => 'required|string',
+        ]);
 
-    public function edit(Passagem $passagem)
-    {
-        return view('passagens.edit', compact('passagem'));
-    }
-
-    public function update(Request $request, Passagem $passagem)
-    {
+        $passagem = Passagem::findOrFail($id);
         $passagem->update($request->all());
-        return redirect()->route('passagens.index')->with('success', 'Passagem atualizada com sucesso!');
+
+        return redirect()->route('vender-passagem')->with('success', 'Passagem atualizada com sucesso!');
     }
 
     public function destroy($id)
@@ -141,28 +149,20 @@ class PassagemController extends Controller
 
         $user = Auth::user();
         $empresaNome = $user->US_NOME;
+
         $query = Passagem::query();
         $query->where('PAS_EMPRESA', $empresaNome);
-
         $perPage = 10;
-
         $passagens = $query->paginate($perPage);
 
-        return view('vender-passagem', [
+        return redirect()->route('vender-passagem')->with([
             'passagens' => $passagens,
             'currentPage' => $passagens->currentPage(),
             'total' => $passagens->total(),
             'perPage' => $perPage,
             'empresaNome' => $empresaNome,
-        ])->with('success', 'Passagem apagada com sucesso!');
-    }
-
-    public function comprar(Request $request)
-    {
-    }
-
-    public function adicionar(Request $request)
-    {
+            'success' => 'Passagem apagada com sucesso!'
+        ]);
     }
 
     public function salvarPassagem(Request $request)
@@ -194,7 +194,8 @@ class PassagemController extends Controller
         ]);
     }
 
-    public function goToCart(Request $request) {
+    public function goToCart(Request $request)
+    {
         $passagemId = $request->query('id');
 
         $passagem = Passagem::find($passagemId);
