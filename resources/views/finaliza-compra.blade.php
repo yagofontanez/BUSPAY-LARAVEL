@@ -32,6 +32,7 @@
 
         html {
             scroll-behavior: smooth;
+            background-color: blue;
         }
 
         .container {
@@ -73,28 +74,24 @@
 <body>
 
   <div class="container">
-    <h1>Passagem comprada com sucesso!</h1>
-    <span>Dados da passagem: </span>
-    <p>{{ $passagem->PAS_CIDADE_IDA }}</p>
-    <p>{{ $passagem->PAS_ESTADO_IDA }}</p>
-    <p>{{ $passagem->PAS_CIDADE_VOLTA }}</p>
-    <p>{{ $passagem->PAS_POLTRONA }}</p>
-    <h2>Seu QRCode para entrada está abaixo: </h2>
-    
-    <img src="{{ asset="assets/qrcode.png" }}" width="250" />
-    
-    <div class="botoes">
-      <button class="btn">
-        Download
-      </button>
-      <form action="{{ route('home-adm') }}">
-       @csrf
-        <button type="submit" class="btn">
-          Voltar para a home
-        </button>
-      </form>
+        <h1>Passagem comprada com sucesso!</h1>
+        <span>Dados da passagem:</span>
+        <p>Cidade de Ida: {{ $passagem->PAS_CIDADE_IDA }}</p>
+        <p>Estado de Ida: {{ $passagem->PAS_ESTADO_IDA }}</p>
+        <p>Cidade de Volta: {{ $passagem->PAS_CIDADE_VOLTA }}</p>
+        <p>Poltrona: {{ $passagem->PAS_POLTRONA }}</p>
+        <h2>Seu QRCode para entrada está abaixo:</h2>
+        
+        <img src="{{ asset('assets/qrcode.png') }}" width="250" alt="QR Code" />
+        
+        <div class="botoes">
+            <button onclick="downloadImage()" class="btn">Download</button>
+            <form action="{{ route('home-adm') }}">
+                @csrf
+                <button type="submit" class="btn">Voltar para a home</button>
+            </form>
+        </div>
     </div>
-  </div>
   
 
 </body>
@@ -105,7 +102,18 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+<script>
+  const downloadImage = () => {
+    const qrCodeImg = document.querySelector('img[alt="QR Code"]');
 
+    const link = document.createElement('a');
+    link.href = qrCodeImg.src;
+
+    link.download = 'qrcode.png';
+        
+    link.click();
+  }
+</script>
 
 @if (session('success'))
     <div style="
