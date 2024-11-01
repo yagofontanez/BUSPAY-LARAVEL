@@ -84,7 +84,7 @@
 
         <div class="botoes">
             <button onclick="downloadImage()" class="btn">Download</button>
-            <form action="{{ route('home-adm') }}">
+            <form action="{{ route('home') }}">
                 @csrf
                 <button type="submit" class="btn">Voltar para a home</button>
             </form>
