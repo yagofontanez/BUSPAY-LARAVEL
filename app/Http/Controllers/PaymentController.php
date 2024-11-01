@@ -7,6 +7,7 @@ use MercadoPago\Client\Preference\PreferenceClient;
 use MercadoPago\MercadoPagoConfig;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Models\Passagem;
 
 class PaymentController extends Controller
 {
@@ -61,7 +62,7 @@ class PaymentController extends Controller
         ];
 
         $backurls = [
-            'success' => route('home'),
+            'success' => route('venda-finalizada'),
             'failure' => route('login')
         ];
 
@@ -91,5 +92,25 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+    
+    public function compraAprovada(Request $request)
+    {
+        $payment_id = $request->query('payment_id');
+        $status = $request->query('status');
+        $passagem_id = $request->query('passagem_id');
+        
+        $passagem = Passagem::find($passagem_id);
+        
+        if ($passagem) {
+            $user = Auth::user();
+            
+            if ($user) {
+                $user_name = $user->US_NOME;
+                $this->saveSale($user->id, $user_name);
+            }
+        }
+        
+        return view('venda-finalizada, compact('passagem'));
     }
 }
