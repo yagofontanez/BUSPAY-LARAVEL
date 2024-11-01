@@ -30,7 +30,8 @@ class PaymentController extends Controller
             'currency_id' => "BRL",
             'quantity' => 1,
             'unit_price' => (float) $request->PAS_PRECO,
-            'passagem' => $request->selected_poltrona
+            'passagem' => $request->selected_poltrona,
+            'external_reference' => $request->id,
         ];
 
         $items = [$product];
@@ -97,22 +98,19 @@ class PaymentController extends Controller
 
     public function compraAprovada(Request $request)
     {
-    $payment_id = $request->query('payment_id');
-    $status = $request->query('status');
-    $id = $request->query('id');
+        $payment_id = $request->query('payment_id');
+        $status = $request->query('status');
+        $passagem_id = $request->query('external_reference');
 
-    $passagem = Passagem::find($id);
+        $passagem = Passagem::find($passagem_id);
 
-    if ($passagem) {
         $user = Auth::user();
 
-        if ($user) {
-            $user_name = $user->US_NOME;
-        }
+            if ($user) {
+                $user_name = $user->US_NOME;
+            }
 
-        return view('finaliza-compra', compact('passagem'));
-    }
+            return view('finaliza-compra', compact('payment_id', 'status'));
 
-      return redirect()->route('home')->with('error', 'Passagem não encontrada');
     }
 }

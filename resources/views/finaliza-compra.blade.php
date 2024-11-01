@@ -45,14 +45,14 @@
           padding: 2rem;
           border-radius: 8px;
         }
-        
+
         .botoes {
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 10px;
         }
-        
+
         .btn {
           padding: 5px 10px;
           border-radius: 8px;
@@ -63,7 +63,7 @@
           font-size: 18px;
           transition: all 0.3s ease-in-out;
         }
-        
+
         .btn:hover {
           background-color: white;
           color: blue;
@@ -76,14 +76,12 @@
   <div class="container">
         <h1>Passagem comprada com sucesso!</h1>
         <span>Dados da passagem:</span>
-        <p>Cidade de Ida: {{ $passagem->PAS_CIDADE_IDA }}</p>
-        <p>Estado de Ida: {{ $passagem->PAS_ESTADO_IDA }}</p>
-        <p>Cidade de Volta: {{ $passagem->PAS_CIDADE_VOLTA }}</p>
-        <p>Poltrona: {{ $passagem->PAS_POLTRONA }}</p>
+        <p>ID: {{ $payment_id }}</p>
+        <p>Status: {{ $status }}</p>
         <h2>Seu QRCode para entrada está abaixo:</h2>
-        
+
         <img src="{{ asset('assets/frame.png') }}" width="250" alt="QR Code" />
-        
+
         <div class="botoes">
             <button onclick="downloadImage()" class="btn">Download</button>
             <form action="{{ route('home-adm') }}">
@@ -92,7 +90,7 @@
             </form>
         </div>
     </div>
-  
+
 
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -110,7 +108,7 @@
     link.href = qrCodeImg.src;
 
     link.download = 'qrcode.png';
-        
+
     link.click();
   }
 </script>
