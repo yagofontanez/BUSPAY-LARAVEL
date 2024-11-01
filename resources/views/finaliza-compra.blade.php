@@ -82,7 +82,7 @@
         <p>Poltrona: {{ $passagem->PAS_POLTRONA }}</p>
         <h2>Seu QRCode para entrada está abaixo:</h2>
         
-        <img src="{{ asset('assets/qrcode.png') }}" width="250" alt="QR Code" />
+        <img src="{{ asset('assets/frame.png') }}" width="250" alt="QR Code" />
         
         <div class="botoes">
             <button onclick="downloadImage()" class="btn">Download</button>
