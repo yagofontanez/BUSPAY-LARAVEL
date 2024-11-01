@@ -131,7 +131,6 @@
                     <button id="btn-entrar-adm">Entrar como Administrador</button>
                 </a>
                 <p>Ainda não tem uma conta? <a href="{{ route('cadastro') }}">Cadastre-se</a></p>
-                <p><a href="{{ route('cadastro-admin') }}">Cadastre um Administrador</a></p>
             </div>
             <div>
                 <span class="span-hover">.</span>

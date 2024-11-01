@@ -271,6 +271,7 @@
                     <li id="clientes">Clientes</li>
                     <li id="empresas">Empresas</li>
                     <li id="onibus">Ônibus</li>
+                    <li><a style="color: inherit; text-decoration: none" href="{{ route('cadastro-admin') }}">Cadastre um <br /> Administrador</a></li>
                 </ul>
             </div>
             <div class="perfil-sair">
