@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/home', [PassagemController::class, 'index'])->name('home');
+    Route::get('/compra-aprovada', [PaymentController::class, 'compraAprovada'])->name('venda-finalizada');
     Route::get('/vender-passagem', [PassagemController::class, 'index_vender'])->name('vender-passagem');
     Route::resource('passagens', PassagemController::class);
     Route::patch('/passagens/salvar', [PassagemController::class, 'salvarPassagem'])->name('passagens.salvar');
