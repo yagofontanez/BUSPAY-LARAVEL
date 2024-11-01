@@ -96,21 +96,23 @@ class PaymentController extends Controller
     
     public function compraAprovada(Request $request)
     {
-        $payment_id = $request->query('payment_id');
-        $status = $request->query('status');
-        $passagem_id = $request->query('passagem_id');
-        
-        $passagem = Passagem::find($passagem_id);
-        
-        if ($passagem) {
-            $user = Auth::user();
-            
-            if ($user) {
-                $user_name = $user->US_NOME;
-                $this->saveSale($user->id, $user_name);
-            }
+    $payment_id = $request->query('payment_id');
+    $status = $request->query('status');
+    $passagem_id = $request->query('passagem_id');
+
+    $passagem = Passagem::find($passagem_id);
+
+    if ($passagem) {
+        $user = Auth::user();
+
+        if ($user) {
+            $user_name = $user->US_NOME;
+            $this->saveSale($user->id, $user_name);
         }
-        
-        return view('venda-finalizada, compact('passagem'));
+
+        return view('finaliza-compra', compact('passagem'));
+    }
+
+      return redirect()->route('home-adm')->with('error', 'Passagem não encontrada');
     }
 }
