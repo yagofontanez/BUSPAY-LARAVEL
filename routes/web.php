@@ -37,13 +37,13 @@ Route::post('/cadastro-admin', [AuthAdminController::class, 'cadastro'])->name('
 Route::post('/login-usuario', [AuthController::class, 'loginUsuario'])->name('login-usuario');
 Route::post('/generate-qr-order', [PaymentController::class, 'createQRCodeOrder'])->name('qrOrder');
 
-Route::get('/home-adm', [AuthAdminController::class, 'showHomeAdm'])->name('home-adm');
 Route::post('/login-administrador', [AuthAdminController::class, 'loginAdmin'])->name('login-administrador');
 Route::delete('/delete-passagem/{id}', [AuthAdminController::class, 'destroy'])->name('delete-passagem');
 Route::delete('/delete-cliente/{id}', [AuthAdminController::class, 'destroyClient'])->name('delete-cliente');
 Route::delete('/delete-empresa/{id}', [AuthAdminController::class, 'destroyEmpresa'])->name('delete-empresa');
 Route::delete('/delete-onibus/{id}', [AuthAdminController::class, 'destroyOnibus'])->name('delete-onibus');
 Route::middleware('auth')->group(function () {
+    Route::get('/home-adm', [AuthAdminController::class, 'showHomeAdm'])->name('home-adm');
     Route::get('/administrador', [AuthAdminController::class, 'index'])->name('administrador');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
