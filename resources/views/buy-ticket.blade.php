@@ -352,6 +352,10 @@
         .valuePayment {
             display: none;
         }
+
+        .selected-poltrona {
+            background-color: white;
+        }
     </style>
 
 </head>
@@ -417,8 +421,17 @@
             </div>
 
             <div id="modal-payment">
-                <img src="{{ asset('assets/image-bus.jpg') }}" width="300rem" height="300rem">
                 <div class="forma-pagamento">
+                    <div
+                        style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px;">
+                        @foreach ($poltronas as $poltrona)
+                            <div class="poltrona"
+                                style="cursor: pointer; color: #2C3E50; width: 50px; height: 50px; border-radius: 8px; border: 1px solid #2C3E50; display: flex; align-items: center; justify-content: center;"
+                                onclick="selectPoltrona(this)">
+                                <h1 style="font-size: 16px; margin: 0;">{{ $poltrona->POL_NUMERO }}</h1>
+                            </div>
+                        @endforeach
+                    </div>
                     <h2>Escolha a Forma de Pagamento</h2>
                     <select id="forma-pagamento" name="forma-pagamento">
                         <option value="empty"></option>
@@ -429,6 +442,7 @@
                         style="display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 25px">
                         @csrf
                         <input type="hidden" name="PAS_PRECO" value="{{ $passagem->PAS_PRECO }}" id="PAS_PRECO">
+                        <input type="hidden" name="selected_poltrona" id="selected_poltrona">
                         <input type="hidden" name="id" value="{{ $passagem->id }}" id="id">
                         <h2 class="valuePayment">R${{ number_format($passagem->PAS_PRECO, 2, ',', '.') }}</h2>
                         <button id="btn-mercado-pago" type="submit">Comprar com Mercado Pago</button>
@@ -437,6 +451,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
 </body>
@@ -448,6 +463,20 @@
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function selectPoltrona(element) {
+        const poltronas = document.querySelectorAll('.poltrona');
+        poltronas.forEach(poltrona => {
+            poltrona.classList.remove('selected-poltrona');
+        });
+
+        element.classList.add('selected-poltrona');
+
+        const poltronaNumero = element.querySelector('h1').innerText;
+        document.getElementById('selected_poltrona').value = poltronaNumero;
+    }
+</script>
 
 <script>
     document.getElementById('paymentForm').addEventListener('submit', function(event) {

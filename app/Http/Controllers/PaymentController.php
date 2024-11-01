@@ -27,7 +27,8 @@ class PaymentController extends Controller
             'description' => "Descrição da passagem " . $request->id,
             'currency_id' => "BRL",
             'quantity' => 1,
-            'unit_price' => (float) $request->PAS_PRECO
+            'unit_price' => (float) $request->PAS_PRECO,
+            'passagem' => $request->selected_poltrona
         ];
 
         $items = [$product];

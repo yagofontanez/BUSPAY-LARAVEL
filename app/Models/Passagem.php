@@ -21,6 +21,7 @@ class Passagem extends Model
         'PAS_PRECO',
         'PAS_EMPRESA',
         'PAS_DIAIDA',
-        'PAS_DIAVOLTA'
+        'PAS_DIAVOLTA',
+        'PAS_ONIBUS_ID'
     ];
 }

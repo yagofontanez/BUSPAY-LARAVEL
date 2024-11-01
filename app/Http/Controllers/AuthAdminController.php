@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Passagem;
 use App\Models\User;
+use App\Models\Onibus;
 
 class AuthAdminController extends Controller
 {
@@ -26,21 +27,22 @@ class AuthAdminController extends Controller
             Auth::login($admin);
             $request->session()->regenerate();
 
-            $queryPassagem = Passagem::query();
-            $queryClientes = User::query()->where('US_TIPOCOMPRADOR', 'Comprador');
-            $queryEmpresas = User::query()->where('US_TIPOCOMPRADOR', 'Vendedor');
-
-            $passagens = $queryPassagem->get();
-            $clientes = $queryClientes->get();
-            $empresas = $queryEmpresas->get();
-
-            return view('home-adm', [
-                'passagens' => $passagens,
-                'clientes' => $clientes,
-                'empresas' => $empresas
-            ])->with('success', 'Login realizado com sucesso!');
+            return redirect()->route('home-adm')->with('success', 'Login realizado com sucesso!');
         }
 
+        return back()->withErrors([
+            'ADM_EMAIL' => 'As credenciais fornecidas estão incorretas.',
+        ]);
+    }
+
+    public function showHomeAdm()
+    {
+        $passagens = Passagem::all();
+        $clientes = User::where('US_TIPOCOMPRADOR', 'Comprador')->get();
+        $empresas = User::where('US_TIPOCOMPRADOR', 'Vendedor')->get();
+        $onibus = Onibus::all();
+
+        return view('home-adm', compact('passagens', 'clientes', 'empresas', 'onibus'));
     }
 
     public function cadastro(Request $request)
@@ -105,11 +107,67 @@ class AuthAdminController extends Controller
         $passagem = Passagem::find($id);
 
         if (!$passagem) {
-            return response()->json(['error' => 'Passagem não encontrada.'], 404);
+            return redirect()->route('home-adm')
+                ->with('error', 'Passagem não encontrada.');
         }
 
         $passagem->delete();
 
-        return response()->json(['success' => 'Passagem deletada com sucesso!'], 200);
+        return redirect()->route('home-adm')
+            ->with('success', 'Passagem deletada com sucesso!');
+    }
+
+    public function destroyClient($id)
+    {
+        $cliente = User::find($id);
+
+        if (!$cliente) {
+            return redirect()->route('home-adm')
+                ->with('error', 'Cliente não encontrado.');
+        }
+
+        $cliente->delete();
+
+        return redirect()->route('home-adm')
+            ->with('success', 'Cliente deletado com sucesso!');
+    }
+
+    public function destroyEmpresa($id)
+    {
+        $empresa = User::find($id);
+
+        if (!$empresa) {
+            return redirect()->route('home-adm')
+                ->with('error', 'Empresa não encontrada.');
+        }
+
+        if ($empresa->US_TIPOCOMPRADOR !== 'Vendedor') {
+            return redirect()->route('home-adm')
+                ->with('error', 'O usuário selecionado não é uma empresa.');
+        }
+
+        $passagensEmpresa = Passagem::where('PAS_EMPRESA', $empresa->US_NOME);
+
+        $passagensEmpresa->delete();
+        $empresa->delete();
+
+        return redirect()->route('home-adm')
+            ->with('success', 'Empresa e passagens relacionadas a ela deletadas com sucesso!');
+
+    }
+
+    public function destroyOnibus($id)
+    {
+        $onibus = Onibus::find($id);
+
+        if (!$onibus) {
+            return redirect()->route('home-adm')
+                ->with('error', 'Ônibus não encontrado.');
+        }
+
+        $onibus->delete();
+
+        return redirect()->route('home-adm')
+            ->with('success', 'Ônibus deletado com sucesso!');
     }
 }

@@ -13,6 +13,7 @@ class Poltrona extends Model {
     protected $fillable = [
         'POL_NUMERO',
         'POL_CLIENTE',
+        'POL_DISPONIVEL',
         'POL_ONIBUSID'
     ];
 }

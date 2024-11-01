@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Passagem;
+use App\Models\Poltrona;
+use App\Models\Onibus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,8 +41,11 @@ class PassagemController extends Controller
 
         $user = Auth::user();
         $empresaNome = $user->US_NOME;
+        $empresaId = $user->id;
         $query = Passagem::query();
+        $queryOnibus = Onibus::query();
         $query->where('PAS_EMPRESA', $empresaNome);
+        $queryOnibus->where('ON_EMPRESA_ID', $user->id);
 
         if ($request->has('date_from') && $request->get('date_from')) {
             $query->where('PAS_DIAIDA', '>=', $request->get('date_from'));
@@ -54,12 +59,16 @@ class PassagemController extends Controller
 
         $passagens = $query->paginate($perPage);
 
+        $onibus = $queryOnibus->paginate($perPage);
+
         return view('vender-passagem', [
             'passagens' => $passagens,
+            'onibus' => $onibus,
             'currentPage' => $passagens->currentPage(),
             'total' => $passagens->total(),
             'perPage' => $perPage,
-            'empresaNome' => $empresaNome
+            'empresaNome' => $empresaNome,
+            'empresaId' => $empresaId
         ]);
     }
 
@@ -70,6 +79,7 @@ class PassagemController extends Controller
 
     public function store(Request $request)
     {
+
         $request->validate([
             'PAS_ESTADOIDA' => 'required|string',
             'PAS_CIDADEIDA' => 'required|string',
@@ -81,6 +91,7 @@ class PassagemController extends Controller
             'PAS_DIAVOLTA' => 'nullable|date',
             'PAS_PRECO' => 'required|string',
             'PAS_EMPRESA' => 'required|string',
+            'PAS_ONIBUS_ID' => 'required|exists:ONIBUS,id'
         ]);
 
         $data = $request->all();
@@ -91,7 +102,9 @@ class PassagemController extends Controller
         $user = Auth::user();
         $empresaNome = $user->US_NOME;
         $query = Passagem::query();
+        $queryOnibus = Onibus::query();
         $query->where('PAS_EMPRESA', $empresaNome);
+        $queryOnibus->where('ON_EMPRESA_ID', $user->id);
 
         if ($request->has('date_from') && $request->get('date_from')) {
             $query->where('PAS_DIAIDA', '>=', $request->get('date_from'));
@@ -105,12 +118,16 @@ class PassagemController extends Controller
 
         $passagens = $query->paginate($perPage);
 
+        $onibus = $queryOnibus->paginate($perPage);
+
         return view('vender-passagem', [
             'passagens' => $passagens,
+            'onibus' => $onibus,
             'currentPage' => $passagens->currentPage(),
             'total' => $passagens->total(),
             'perPage' => $perPage,
-            'empresaNome' => $empresaNome
+            'empresaNome' => $empresaNome,
+            'empresaId' => $user->id
         ])->with('success', 'Passagem adicionada com sucesso!');
 
         // return view('vender-passagem')->with('success', 'Passagem adicionada com sucesso!');
@@ -200,8 +217,14 @@ class PassagemController extends Controller
 
         $passagem = Passagem::find($passagemId);
 
+        $poltronas = Poltrona::query()
+            ->where('POL_DISPONIVEL', true)
+            ->where('POL_ONIBUSID', $passagem->PAS_ONIBUS_ID)
+            ->get();
+
         return view('buy-ticket', [
-            'passagem' => $passagem
+            'passagem' => $passagem,
+            'poltronas' => $poltronas,
         ])->with('success', 'Passagem adicionada com sucesso!');
     }
 }

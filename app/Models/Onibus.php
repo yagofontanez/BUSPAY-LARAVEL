@@ -14,5 +14,6 @@ class Onibus extends Model {
         'ON_MARCA',
         'ON_QTDEPOLTRONAS',
         'ON_PLACA',
+        'ON_EMPRESA_ID'
     ];
 }
